@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ae 编程语言 - 基于字节码的栈式虚拟机语言">
+    <title>Ae 编程语言 | Ae Language</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo" data-page="home">
+                <span class="logo-symbol">{Ae}</span>
+                <span class="logo-text">Ae Language</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" data-page="home" class="nav-link active">首页</a></li>
+                <li><a href="#download" data-page="download" class="nav-link">下载</a></li>
+                <li><a href="#docs" data-page="docs" class="nav-link">文档</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面容器 -->
+    <main id="app">
+
+        <!-- ==================== 首页 ==================== -->
+        <section class="page" id="page-home">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-bg"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <span class="badge-dot"></span>
+                            v1.0 · 字节码虚拟机语言
+                        </div>
+                        <h1 class="hero-title">
+                            一门小而完整的<br>
+                            <span class="hero-highlight">字节码编程语言</span>
+                        </h1>
+                        <p class="hero-desc">
+                            从源码编译为紧凑字节码，由栈式虚拟机执行。<br class="hide-mobile">
+                            支持变量、条件分支、循环、函数调用与自动类型提升，<br class="hide-mobile">
+                            全部在约 2000 行 C++ 中实现。
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#download" class="btn btn-primary" data-page="download">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                立即下载
+                            </a>
+                            <a href="#docs" class="btn btn-outline" data-page="docs">
+                                查看文档
+                            </a>
+                        </div>
+                        <div class="hero-meta">
+                            <div class="meta-item">
+                                <span class="meta-num">4</span>
+                                <span class="meta-label">内置类型</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-num">44</span>
+                                <span class="meta-label">字节码指令</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-num">3</span>
+                                <span class="meta-label">工具链组件</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 代码示例 -->
+            <div class="section code-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">Hello, Ae</h2>
+                        <p class="section-sub">看看 Ae 代码长什么样</p>
+                    </div>
+                    <div class="code-window">
+                        <div class="code-header">
+                            <div class="code-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="code-filename">hello.ae</span>
+                        </div>
+                        <div class="code-body">
+<pre><span class="kw">main</span> {
+    <span class="builtin">pr</span>(<span class="str">"Hello, Ae!"</span>)
+
+    <span class="kw">if</span> (<span class="num">1</span> &lt; <span class="num">2</span>) {
+        <span class="builtin">pr</span>(<span class="str">"1 小于 2，条件成立"</span>)
+    }
+
+    <span class="kw">while</span> (count &lt; <span class="num">5</span>) {
+        count = count + <span class="num">1</span>
+    }
+    <span class="builtin">pr</span>(count)
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 特性 -->
+            <div class="section features-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">核心特性</h2>
+                        <p class="section-sub">简洁而完整</p>
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l3 3-3 3M13 15h3M3 3v18h18V3H3z"/></svg>
+                            </div>
+                            <h3>编译到字节码</h3>
+                            <p>源码经编译器生成紧凑的 <code>.aeo</code> 字节码文件，魔数 <code>AeBc</code>，大端编码，结构清晰。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                            </div>
+                            <h3>栈式虚拟机</h3>
+                            <p>基于操作数栈执行，采用类型化标签值模型（Tagged Value），运行时跟踪 int / double / string / bool。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                            </div>
+                            <h3>自动类型提升</h3>
+                            <p>int 与 double 混合运算时自动提升为浮点，比较运算支持整型与浮点两种指令集，无需手动转换。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                            </div>
+                            <h3>控制流完整</h3>
+                            <p>支持 <code>if/else</code>、<code>while</code> 循环，以及 <code>break</code> 和 <code>continue</code>（含嵌套循环回填），编译期占位 + 链接期重写。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+                            </div>
+                            <h3>反汇编工具</h3>
+                            <p>内置 <code>aed</code> 反汇编器，可将 <code>.aeo</code> 字节码反汇编为可读的汇编格式伪代码，方便调试与分析。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg>
+                            </div>
+                            <h3>复合赋值</h3>
+                            <p>支持 <code>+= -= *= /=</code> 复合赋值运算符，结合全局变量槽位管理，编写更简洁。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 架构 -->
+            <div class="section arch-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">工具链</h2>
+                        <p class="section-sub">三个工具，完整的编译-执行链路</p>
+                    </div>
+                    <div class="arch-flow">
+                        <div class="arch-step">
+                            <div class="arch-num">01</div>
+                            <div class="arch-info">
+                                <h3>aec <span class="arch-name">编译器</span></h3>
+                                <p>词法分析 → 递归下降语法分析 → 代码生成 → 链接</p>
+                                <code>.ae → .aeo</code>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </div>
+                        <div class="arch-step">
+                            <div class="arch-num">02</div>
+                            <div class="arch-info">
+                                <h3>ae <span class="arch-name">虚拟机</span></h3>
+                                <p>字节码加载 → 常量池解析 → 指令调度执行</p>
+                                <code>.aeo → 运行</code>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </div>
+                        <div class="arch-step">
+                            <div class="arch-num">03</div>
+                            <div class="arch-info">
+                                <h3>aed <span class="arch-name">反汇编器</span></h3>
+                                <p>解析文件头 + 常量池 → 逐条反汇编指令流</p>
+                                <code>.aeo → 汇编</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速开始 -->
+            <div class="section quick-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">快速开始</h2>
+                        <p class="section-sub">三步运行你的第一段 Ae 代码</p>
+                    </div>
+                    <div class="quick-grid">
+                        <div class="quick-card">
+                            <div class="quick-num">1</div>
+                            <h4>编写源码</h4>
+                            <div class="quick-code">
+<pre><span class="kw">main</span> {
+    <span class="builtin">pr</span>(<span class="str">"你好，世界"</span>)
+    x = <span class="num">10</span>
+    y = <span class="num">3.14</span>
+    <span class="builtin">pr</span>(x * y)
+}</pre>
+                            </div>
+                        </div>
+                        <div class="quick-card">
+                            <div class="quick-num">2</div>
+                            <h4>编译为字节码</h4>
+                            <div class="quick-code">
+<pre><span class="prompt">$</span> aec main.ae
+<span class="output">✓ 编译成功: main.ae → main.aeo</span>
+<span class="output">  (常量池 4 项, 代码 28 字节)</span></pre>
+                            </div>
+                        </div>
+                        <div class="quick-card">
+                            <div class="quick-num">3</div>
+                            <h4>运行程序</h4>
+                            <div class="quick-code">
+<pre><span class="prompt">$</span> ae main.aeo
+<span class="output">你好，世界</span>
+<span class="output">31.4</span></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="section cta-section">
+                <div class="container">
+                    <div class="cta-box">
+                        <h2>准备好开始了吗？</h2>
+                        <p>下载适用于你平台的工具链，开始使用 Ae 编程。</p>
+                        <a href="#download" class="btn btn-primary btn-lg" data-page="download">
+                            前往下载
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 下载页 ==================== -->
+        <section class="page" id="page-download" style="display:none;">
+            <div class="section download-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">下载 Ae</h2>
+                        <p class="section-sub">选择适合你操作系统的版本</p>
+                    </div>
+
+                    <div class="download-grid">
+                        <!-- Windows -->
+                        <div class="download-card">
+                            <div class="dl-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                            </div>
+                            <h3>Windows</h3>
+                            <p class="dl-desc">适用于 Windows 10 / 11 的预编译环境包</p>
+                            <div class="dl-meta">
+                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-size">~2.4 MB</span>
+                            </div>
+                            <button class="btn btn-primary dl-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                下载 .zip
+                            </button>
+                            <p class="dl-coming">即将发布</p>
+                        </div>
+
+                        <!-- Android -->
+                        <div class="download-card">
+                            <div class="dl-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01M7 5h10M9 21l-1 2M15 21l1 2M7 9h10v8H7z"/></svg>
+                            </div>
+                            <h3>Android</h3>
+                            <p class="dl-desc">适用于 Android 终端环境的工具链</p>
+                            <div class="dl-meta">
+                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-size">~1.8 MB</span>
+                            </div>
+                            <button class="btn btn-primary dl-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                下载 .tar.gz
+                            </button>
+                            <p class="dl-coming">即将发布</p>
+                        </div>
+
+                        <!-- Linux -->
+                        <div class="download-card">
+                            <div class="dl-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/><path d="M4 22c0-4 4-6 8-6s8 2 8 6M9 12l-2 4M15 12l2 4"/></svg>
+                            </div>
+                            <h3>Linux</h3>
+                            <p class="dl-desc">适用于 x86_64 Linux 的预编译二进制</p>
+                            <div class="dl-meta">
+                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-size">~2.1 MB</span>
+                            </div>
+                            <button class="btn btn-primary dl-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                下载 .tar.gz
+                            </button>
+                            <p class="dl-coming">即将发布</p>
+                        </div>
+                    </div>
+
+                    <!-- 源码 -->
+                    <div class="source-box">
+                        <div class="source-info">
+                            <h3>从源码构建</h3>
+                            <p>如果你想从源码编译 Ae，只需要一个支持 C++11 的编译器：</p>
+                        </div>
+                        <div class="source-code">
+<pre><span class="prompt">#</span> 克隆仓库
+git clone https://github.com/AEBL7/ZfDriver.git
+cd ZfDriver
+
+<span class="prompt">#</span> 编译三个工具
+g++ -O2 -o aec aec.cpp
+g++ -O2 -o ae  ae.cpp
+g++ -O2 -o aed aed.cpp</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 文档页 ==================== -->
+        <section class="page" id="page-docs" style="display:none;">
+            <div class="section docs-section">
+                <div class="container">
+                    <div class="dev-banner">
+                        <div class="dev-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <h2>文档正在开发中</h2>
+                        <p>我们正在撰写完整的语言参考文档，包括语法规范、字节码格式、标准库 API 和教程。</p>
+                        <div class="dev-progress">
+                            <div class="progress-label">
+                                <span>完成度</span>
+                                <span>30%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width:30%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 预览内容 -->
+                    <div class="docs-preview">
+                        <h3>即将涵盖的内容</h3>
+                        <div class="docs-grid">
+                            <div class="doc-item">
+                                <h4>语言语法</h4>
+                                <p>完整的语法规则、表达式优先级、语句结构</p>
+                            </div>
+                            <div class="doc-item">
+                                <h4>类型系统</h4>
+                                <p>int / double / string / bool 及其自动转换规则</p>
+                            </div>
+                            <div class="doc-item">
+                                <h4>字节码规范</h4>
+                                <p>文件格式、常量池布局、全部 44 条指令参考</p>
+                            </div>
+                            <div class="doc-item">
+                                <h4>内置函数</h4>
+                                <p><code>pr()</code> 等内置函数的用法与扩展指南</p>
+                            </div>
+                            <div class="doc-item">
+                                <h4>控制流</h4>
+                                <p>if/else、while、break、continue 的使用示例</p>
+                            </div>
+                            <div class="doc-item">
+                                <h4>虚拟机架构</h4>
+                                <p>栈模型、类型标签、指令调度与执行流程</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span class="logo-symbol">{Ae}</span>
+                    <span class="footer-copy">© 2026 Ae Language. 基于字节码的栈式虚拟机语言。</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#download" data-page="download">下载</a>
+                    <a href="#docs" data-page="docs">文档</a>
+                    <a href="https://github.com/AEBL7" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
