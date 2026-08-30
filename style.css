@@ -17,13 +17,13 @@
     --bg: #FAFAF9;
     --bg-card: #FFFFFF;
     --bg-hero: #F5F3FF;
-    --bg-code: #1E1E2E;
-    --bg-code-inline: #F1F0FE;
+    --bg-code: #FBF6F8;       /* Ae Light (Monet Pink) 编辑器背景 */
+    --bg-code-inline: #F1EDF0;
 
     --text: #1F2937;
     --text-secondary: #6B7280;
     --text-muted: #9CA3AF;
-    --text-code: #E4E4E7;
+    --text-code: #3D2B36;
 
     --border: #E8E8EC;
     --border-light: #F0F0F4;
@@ -338,7 +338,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    background: #2D2D3D;
+    background: #F3E9EE;
+    border-bottom: 1px solid #E8DDE2;
 }
 
 .code-dots {
@@ -359,7 +360,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .code-filename {
     font-family: var(--font-mono);
     font-size: 13px;
-    color: #AAA;
+    color: #6B4B7A;
 }
 
 .code-body {
@@ -372,17 +373,23 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     font-family: var(--font-mono);
     font-size: 14px;
     line-height: 1.8;
-    color: var(--text-code);
+    color: #3D2B36;          /* 默认前景色，对应主题 editor.foreground */
     white-space: pre;
 }
 
-/* 语法高亮 */
-.code-body .kw { color: #C4B5FD; font-weight: 600; }
-.code-body .str { color: #A5E075; }
-.code-body .num { color: #FBBF24; }
-.code-body .builtin { color: #67E8F9; }
-.code-body .prompt { color: var(--accent); }
-.code-body .output { color: #A1A1AA; }
+/* 语法高亮 —— 直接对接 Ae TextMate 主题 (Ae Light / Monet Pink)
+   scope 映射: keyword.control / support.function / string / numeric /
+   language.boolean / support.type / comment / operator             */
+.code-body .kw      { color: #A33B5C; font-weight: 600; }   /* keyword.control.ae   */
+.code-body .builtin { color: #C75B7A; }                      /* support.function.ae  */
+.code-body .str     { color: #8B5B7A; }                      /* string.quoted.*.ae   */
+.code-body .num     { color: #C96B3E; }                      /* constant.numeric.ae  */
+.code-body .bool    { color: #B23B5E; font-weight: 600; }   /* language.boolean.ae  */
+.code-body .type    { color: #7B4B8A; font-weight: 600; }   /* support.type.ae      */
+.code-body .comment { color: #8B7B7A; font-style: italic; }  /* comment.line.*.ae    */
+.code-body .op      { color: #6B4B7A; }                      /* keyword.operator.ae  */
+.code-body .prompt  { color: var(--accent); }
+.code-body .output  { color: #8B7B7A; }
 
 /* ---------- Features ---------- */
 .features-section { background: var(--bg); }
@@ -965,7 +972,17 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 
     .navbar { background: rgba(24,24,27,0.85); }
     .hero { background: linear-gradient(180deg, #1E1B38 0%, #18181B 100%); }
-    .code-header { background: #1A1A28; }
+    .code-header { background: #2A2428; border-bottom-color: #3F3F46; }
+    .code-window { background: #1E1A1D; }
+    .code-body .kw      { color: #E58AA8; }
+    .code-body .builtin { color: #E0A0B8; }
+    .code-body .str     { color: #C49BB5; }
+    .code-body .num     { color: #E0A070; }
+    .code-body .bool    { color: #E58AA8; }
+    .code-body .type    { color: #B89AC8; }
+    .code-body .comment { color: #9A8A89; }
+    .code-body .op      { color: #B0A0C0; }
+    .code-body .output  { color: #9A8A89; }
     .code-window, .feature-card, .download-card, .source-box, .doc-item, .dev-banner { border-color: #3F3F46; }
     .footer { background: #27272A; }
 }

@@ -91,17 +91,20 @@
                             <span class="code-filename">hello.ae</span>
                         </div>
                         <div class="code-body">
-<pre><span class="kw">main</span> {
-    <span class="builtin">pr</span>(<span class="str">"Hello, Ae!"</span>)
+<pre><span class="comment">// 求 1 到 n 的和</span>
+<span class="kw">main</span> {
+    <span class="type">int</span> n = <span class="num">100</span>
+    <span class="type">int</span> sum = <span class="num">0</span>
+    <span class="type">bool</span> done = <span class="bool">false</span>
 
-    <span class="kw">if</span> (<span class="num">1</span> &lt; <span class="num">2</span>) {
-        <span class="builtin">pr</span>(<span class="str">"1 小于 2，条件成立"</span>)
+    <span class="kw">while</span> (n &gt; <span class="num">0</span>) {
+        sum = sum + n
+        n = n - <span class="num">1</span>
     }
 
-    <span class="kw">while</span> (count &lt; <span class="num">5</span>) {
-        count = count + <span class="num">1</span>
+    <span class="kw">if</span> (sum &gt; <span class="num">0</span>) {
+        <span class="builtin">pr</span>(<span class="str">"结果是: "</span> + sum)
     }
-    <span class="builtin">pr</span>(count)
 }</pre>
                         </div>
                     </div>
@@ -216,11 +219,17 @@
                             <div class="quick-num">1</div>
                             <h4>编写源码</h4>
                             <div class="quick-code">
-<pre><span class="kw">main</span> {
+<pre><span class="comment">// hello.ae</span>
+<span class="kw">main</span> {
     <span class="builtin">pr</span>(<span class="str">"你好，世界"</span>)
-    x = <span class="num">10</span>
-    y = <span class="num">3.14</span>
+
+    <span class="type">double</span> x = <span class="num">10</span>
+    <span class="type">double</span> y = <span class="num">3.14</span>
     <span class="builtin">pr</span>(x * y)
+
+    <span class="kw">if</span> (<span class="bool">true</span>) {
+        <span class="builtin">pr</span>(<span class="str">"自动类型提升 ✓"</span>)
+    }
 }</pre>
                             </div>
                         </div>
