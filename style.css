@@ -120,6 +120,16 @@ code.inline-code {
     background: var(--bg-code-inline);
     padding: 2px 8px;
     border-radius: 6px;
+    vertical-align: middle;
+}
+
+/* 当 logo 为图片（AeLogo.svg）时，覆盖文字相关样式 */
+img.logo-symbol {
+    height: 28px;
+    width: auto;
+    padding: 0;
+    background: transparent;
+    border-radius: 4px;
 }
 
 .logo-text {
@@ -1158,6 +1168,7 @@ code.inline-code {
     /* 导航 */
     .nav-toggle { display: flex; }
     .logo-text { display: none; }
+    img.logo-symbol { height: 24px; }
 
     .nav-links {
         position: fixed;
