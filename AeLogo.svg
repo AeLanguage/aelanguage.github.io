@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- 透明背景 -->
+  <!-- 外圆：粗描边 #FCFCFC -->
+  <circle cx="160" cy="160" r="150" fill="none" stroke="#FCFCFC" stroke-width="20"/>
+  <!-- 内圆：填充 #D8B1B3 -->
+  <circle cx="160" cy="160" r="140" fill="#D8B1B3"/>
+  <!-- 居中文字 Æ，斜体加粗 -->
+  <text x="180" y="230"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="180"
+      font-weight="bold"
+      fill="#EFD3D8"
+      transform="skewX(-8)">&#xC6;</text>
+</svg>
