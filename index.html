@@ -1,830 +1,1231 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ae — 字节码型编程语言</title>
-<meta name="description" content="Ae 是一门基于自定义虚拟机与字节码的现代编程语言，专为学习、嵌入式脚本与快速原型而设计。">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ae 编程语言 - 基于字节码的栈式虚拟机语言，支持自定义函数、局部变量与递归">
+    <title>Ae 编程语言 | Ae Language</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- 顶部导航 -->
-<header class="nav" id="nav">
-<div class="nav-inner">
-<a href="#/" class="brand" onclick="navigate('/')">
-<span class="brand-mark">Ae</span>
-<span class="brand-full">Ae Language</span>
-</a>
-<nav class="nav-links" id="navLinks">
-<a href="#/" onclick="navigate('/')" data-page="home">首页</a>
-<a href="#/docs" onclick="navigate('/docs')" data-page="docs">文档</a>
-<a href="#/download" onclick="navigate('/download')" data-page="download">下载</a>
-</nav>
-<button class="hamburger" id="hamburger" aria-label="菜单">
-<span></span><span></span><span></span>
-</button>
-</div>
-</header>
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo" data-page="home">
+                <span class="logo-symbol">{Ae}</span>
+                <span class="logo-text">Ae Language</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" data-page="home" class="nav-link active">首页</a></li>
+                <li><a href="#download" data-page="download" class="nav-link">下载</a></li>
+                <li><a href="#docs" data-page="docs" class="nav-link">文档</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<!-- ========== 首页 ========== -->
-<main id="page-home" class="page">
-<!-- Hero -->
-<section class="hero">
-<div class="container">
-<div class="hero-grid">
-<div class="hero-text">
-<span class="badge">Version 1.0 · 字节码虚拟机</span>
-<h1>一门小而完整的<br><span class="grad">字节码编程语言</span></h1>
-<p class="hero-desc">
-Ae（发音同英文字母 A）是一门面向学习与研究、同时兼顾实用性的编程语言。
-源代码经编译器翻译为紧凑的 <code>.aeo</code> 字节码，由栈式虚拟机执行——
-整个工具链仅三个 C++ 文件，零第三方依赖，可移植到几乎所有平台。
-</p>
-<div class="hero-actions">
-<a href="#/docs" class="btn btn-primary" onclick="navigate('/docs')">阅读文档 →</a>
-<a href="#/download" class="btn btn-ghost" onclick="navigate('/download')">获取运行时</a>
-</div>
-<div class="hero-meta">
-<span><b>编译器</b> aec</span>
-<span><b>虚拟机</b> ae</span>
-<span><b>反汇编器</b> aed</span>
-</div>
-</div>
-<div class="hero-code">
-<div class="code-window">
-<div class="code-title">
-<span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-<span class="code-title-text">fibonacci.ae</span>
-</div>
-<div class="code-body">
-<pre><code><span class="comment">// 递归计算斐波那契数</span>
-<span class="kw">func</span> <span class="func-name">fib</span>(<span class="param">n</span>) {
+    <!-- 页面容器 -->
+    <main id="app">
+
+        <!-- ==================== 首页 ==================== -->
+        <section class="page" id="page-home">
+            <!-- Hero -->
+            <div class="hero">
+                <div class="hero-bg"></div>
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <span class="badge-dot"></span>
+                            v1.0 · 字节码虚拟机语言
+                        </div>
+                        <h1 class="hero-title">
+                            一门小而完整的<br>
+                            <span class="hero-highlight">字节码编程语言</span>
+                        </h1>
+                        <p class="hero-desc">
+                            Ae 是一种静态作用域的栈式虚拟机语言，源码经编译器生成紧凑的 <code class="inline-code">.aeo</code> 字节码，<br class="hide-mobile">
+                            由虚拟机解释执行。支持自定义函数、局部变量、递归调用与自动类型提升，<br class="hide-mobile">
+                            全部工具链以约 2000 行 C++ 实现，零第三方依赖。
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#download" class="btn btn-primary" data-page="download">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                立即下载
+                            </a>
+                            <a href="#docs" class="btn btn-outline" data-page="docs">
+                                阅读文档
+                            </a>
+                        </div>
+                        <div class="hero-meta">
+                            <div class="meta-item">
+                                <span class="meta-num">4</span>
+                                <span class="meta-label">内置类型</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-num">44</span>
+                                <span class="meta-label">字节码指令</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-num">3</span>
+                                <span class="meta-label">工具链组件</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 代码示例 -->
+            <div class="section code-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">Hello, Ae</h2>
+                        <p class="section-sub">看看 Ae 代码长什么样</p>
+                    </div>
+                    <div class="code-window">
+                        <div class="code-header">
+                            <div class="code-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="code-filename">hello.ae</span>
+                        </div>
+                        <div class="code-body">
+<pre><span class="comment">// 计算斐波那契数列</span>
+<span class="funcDef">func</span> <span class="funcName">fib</span>(<span class="param">n</span>) {
     <span class="kw">if</span> (n &lt;= <span class="num">1</span>) {
         <span class="kw">return</span> n
     }
-    <span class="kw">return</span> <span class="func-call">fib</span>(n - <span class="num">1</span>) + <span class="func-call">fib</span>(n - <span class="num">2</span>)
+    <span class="kw">return</span> <span class="funcCall">fib</span>(n - <span class="num">1</span>) + <span class="funcCall">fib</span>(n - <span class="num">2</span>)
 }
 
 <span class="kw">main</span> {
-    <span class="kw">local</span> <span class="local-var">i</span> = <span class="num">1</span>
-    <span class="kw">while</span> (i &lt;= <span class="num">10</span>) {
-        <span class="builtin">prln</span>(<span class="str">"fib("</span>, i, <span class="str">") = "</span>, <span class="func-call">fib</span>(i))
+    <span class="type">int</span> result = <span class="funcCall">fib</span>(<span class="num">10</span>)
+    <span class="builtin">prln</span>(<span class="str">"fib(10) = "</span> + result)
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 特性 -->
+            <div class="section features-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">核心特性</h2>
+                        <p class="section-sub">简洁而完整</p>
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l3 3-3 3M13 15h3M3 3v18h18V3H3z"/></svg>
+                            </div>
+                            <h3>编译到字节码</h3>
+                            <p>源码经编译器生成紧凑的 <code>.aeo</code> 字节码文件，魔数 <code>AeBc</code>，大端编码，含文件头、常量池与代码段。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
+                            </div>
+                            <h3>栈式虚拟机</h3>
+                            <p>基于操作数栈执行，采用类型化标签值模型（Tagged Value），运行时跟踪 <code>int / double / string / bool</code> 四种类型。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                            </div>
+                            <h3>自动类型提升</h3>
+                            <p><code>int</code> 与 <code>double</code> 混合运算时自动提升为浮点，比较运算提供整型与浮点两套指令集，无需手动转换。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                            </div>
+                            <h3>自定义函数</h3>
+                            <p>支持自定义函数定义、参数传递、局部变量隔离，以及<strong>递归调用</strong>（含独立调用帧与返回地址管理）。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+                            </div>
+                            <h3>反汇编工具</h3>
+                            <p>内置 <code>aed</code> 反汇编器，可将 <code>.aeo</code> 字节码反汇编为可读的汇编格式，便于调试与分析。</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg>
+                            </div>
+                            <h3>复合赋值</h3>
+                            <p>支持 <code>+= -= *= /=</code> 复合赋值运算符，结合全局/局部变量槽位管理，编写更简洁。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 架构 -->
+            <div class="section arch-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">工具链</h2>
+                        <p class="section-sub">三个工具，完整的编译-执行链路</p>
+                    </div>
+                    <div class="arch-flow">
+                        <div class="arch-step">
+                            <div class="arch-num">01</div>
+                            <div class="arch-info">
+                                <h3>aec <span class="arch-name">编译器</span></h3>
+                                <p>词法分析 → 递归下降语法分析 → 代码生成 → 链接</p>
+                                <code>.ae → .aeo</code>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </div>
+                        <div class="arch-step">
+                            <div class="arch-num">02</div>
+                            <div class="arch-info">
+                                <h3>ae <span class="arch-name">虚拟机</span></h3>
+                                <p>字节码加载 → 常量池解析 → 指令调度执行</p>
+                                <code>.aeo → 运行</code>
+                            </div>
+                        </div>
+                        <div class="arch-arrow">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                        </div>
+                        <div class="arch-step">
+                            <div class="arch-num">03</div>
+                            <div class="arch-info">
+                                <h3>aed <span class="arch-name">反汇编器</span></h3>
+                                <p>解析文件头 + 常量池 → 逐条反汇编指令流</p>
+                                <code>.aeo → 汇编</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速开始 -->
+            <div class="section quick-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">快速开始</h2>
+                        <p class="section-sub">三步运行你的第一段 Ae 代码</p>
+                    </div>
+                    <div class="quick-grid">
+                        <div class="quick-card">
+                            <div class="quick-num">1</div>
+                            <h4>编写源码</h4>
+                            <div class="quick-code">
+<pre><span class="comment">// hello.ae</span>
+<span class="funcDef">func</span> <span class="funcName">greet</span>(<span class="param">name</span>) {
+    <span class="builtin">prln</span>(<span class="str">"你好, "</span> + name)
+}
+
+<span class="kw">main</span> {
+    <span class="type">double</span> x = <span class="num">3.14</span>
+    <span class="type">double</span> y = <span class="num">2.0</span>
+    <span class="builtin">prln</span>(x * y)
+
+    <span class="funcCall">greet</span>(<span class="str">"世界"</span>)
+}</pre>
+                            </div>
+                        </div>
+                        <div class="quick-card">
+                            <div class="quick-num">2</div>
+                            <h4>编译为字节码</h4>
+                            <div class="quick-code">
+<pre><span class="prompt">$</span> aec hello.ae
+<span class="output">✓ 编译成功: hello.ae → hello.aeo</span>
+<span class="output">  常量池: 4 项</span>
+<span class="output">  全局变量: 0 个</span>
+<span class="output">  函数: 1 个</span></pre>
+                            </div>
+                        </div>
+                        <div class="quick-card">
+                            <div class="quick-num">3</div>
+                            <h4>运行程序</h4>
+                            <div class="quick-code">
+<pre><span class="prompt">$</span> ae hello.aeo
+<span class="output">6.28</span>
+<span class="output">你好, 世界</span></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="section cta-section">
+                <div class="container">
+                    <div class="cta-box">
+                        <h2>准备好开始了吗？</h2>
+                        <p>下载适用于你平台的工具链，开始使用 Ae 编程。</p>
+                        <a href="#download" class="btn btn-primary btn-lg" data-page="download">
+                            前往下载
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 下载页 ==================== -->
+        <section class="page" id="page-download" style="display:none;">
+            <div class="section download-section">
+                <div class="container">
+                    <div class="section-head">
+                        <h2 class="section-title">下载 Ae</h2>
+                        <p class="section-sub">选择适合你操作系统的版本</p>
+                    </div>
+
+                    <div class="download-grid">
+                        <!-- Windows -->
+                        <div class="download-card">
+                            <div class="dl-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                            </div>
+                            <h3>Windows</h3>
+                            <p class="dl-desc">适用于 Windows 10 / 11 的预编译环境包</p>
+                            <div class="dl-meta">
+                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-size">~2.4 MB</span>
+                            </div>
+                            <button class="btn btn-primary dl-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                下载 .zip
+                            </button>
+                            <p class="dl-coming">即将发布</p>
+                        </div>
+
+                        <!-- Android -->
+                        <div class="download-card">
+                            <div class="dl-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01M7 5h10M9 21l-1 2M15 21l1 2M7 9h10v8H7z"/></svg>
+                            </div>
+                            <h3>Android</h3>
+                            <p class="dl-desc">适用于 Android 终端环境的工具链</p>
+                            <div class="dl-meta">
+                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-size">~1.8 MB</span>
+                            </div>
+                            <button class="btn btn-primary dl-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                下载 .tar.gz
+                            </button>
+                            <p class="dl-coming">即将发布</p>
+                        </div>
+
+                        <!-- Linux -->
+                        <div class="download-card">
+                            <div class="dl-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a4 4 0 0 0-4 4v2a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"/><path d="M4 22c0-4 4-6 8-6s8 2 8 6M9 12l-2 4M15 12l2 4"/></svg>
+                            </div>
+                            <h3>Linux</h3>
+                            <p class="dl-desc">适用于 x86_64 Linux 的预编译二进制</p>
+                            <div class="dl-meta">
+                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-size">~2.1 MB</span>
+                            </div>
+                            <button class="btn btn-primary dl-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                下载 .tar.gz
+                            </button>
+                            <p class="dl-coming">即将发布</p>
+                        </div>
+                    </div>
+
+                    <!-- 源码 -->
+                    <div class="source-box">
+                        <div class="source-info">
+                            <h3>从源码构建</h3>
+                            <p>Ae 的整个工具链仅依赖标准 C++ 库（C++11 及以上），无需任何第三方依赖。克隆仓库后，使用以下命令编译三个工具：</p>
+                        </div>
+                        <div class="source-code">
+<pre><span class="comment"># 克隆仓库</span>
+git clone https://github.com/aelang/ae.git
+<span class="kw">cd</span> ae
+
+<span class="comment"># 编译三个工具（aec=编译器, ae=虚拟机, aed=反汇编器）</span>
+g++ -O2 -o aec aec.cpp
+g++ -O2 -o ae  ae.cpp
+g++ -O2 -o aed aed.cpp
+
+<span class="comment"># 验证安装</span>
+./aec --help
+./ae --help</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 文档页 ==================== -->
+        <section class="page" id="page-docs" style="display:none;">
+            <div class="section docs-section">
+                <div class="container">
+                    <div class="docs-layout">
+                        <!-- 侧边栏 -->
+                        <aside class="docs-sidebar" id="docsSidebar">
+                            <nav class="docs-nav">
+                                <div class="docs-nav-group">
+                                    <h4>入门指南</h4>
+                                    <a href="#doc-intro" class="docs-nav-link active">简介</a>
+                                    <a href="#doc-install" class="docs-nav-link">安装与构建</a>
+                                    <a href="#doc-quickstart" class="docs-nav-link">快速开始</a>
+                                </div>
+                                <div class="docs-nav-group">
+                                    <h4>语言参考</h4>
+                                    <a href="#doc-types" class="docs-nav-link">类型系统</a>
+                                    <a href="#doc-vars" class="docs-nav-link">变量与作用域</a>
+                                    <a href="#doc-functions" class="docs-nav-link">函数</a>
+                                    <a href="#doc-control" class="docs-nav-link">控制流</a>
+                                    <a href="#doc-operators" class="docs-nav-link">运算符与表达式</a>
+                                    <a href="#doc-builtins" class="docs-nav-link">内置函数</a>
+                                </div>
+                                <div class="docs-nav-group">
+                                    <h4>字节码规范</h4>
+                                    <a href="#doc-format" class="docs-nav-link">文件格式</a>
+                                    <a href="#doc-constants" class="docs-nav-link">常量池</a>
+                                    <a href="#doc-instructions" class="docs-nav-link">指令集参考</a>
+                                </div>
+                                <div class="docs-nav-group">
+                                    <h4>工具链</h4>
+                                    <a href="#doc-aec" class="docs-nav-link">编译器 (aec)</a>
+                                    <a href="#doc-ae" class="docs-nav-link">虚拟机 (ae)</a>
+                                    <a href="#doc-aed" class="docs-nav-link">反汇编器 (aed)</a>
+                                </div>
+                            </nav>
+                        </aside>
+
+                        <!-- 文档正文 -->
+                        <div class="docs-content">
+                            <!-- 简介 -->
+                            <article class="doc-section" id="doc-intro">
+                                <h1>Ae 编程语言</h1>
+                                <p class="doc-lede">Ae 是一种面向教学的、基于字节码的栈式虚拟机编程语言。它由编译器 <code>aec</code>、虚拟机 <code>ae</code> 和反汇编器 <code>aed</code> 三个独立工具组成，源码经编译后生成紧凑的二进制字节码，由虚拟机解释执行。</p>
+
+                                <h2>设计目标</h2>
+                                <p>Ae 的设计遵循以下原则：</p>
+                                <ul class="doc-list">
+                                    <li><strong>简洁性</strong>：语法最小化，核心关键字不超过 12 个，学习成本低。</li>
+                                    <li><strong>透明性</strong>：字节码格式完全公开，可直接阅读反汇编输出，便于理解编译原理。</li>
+                                    <li><strong>自包含</strong>：整个工具链以纯 C++ 实现，零第三方依赖，单文件源码即可编译。</li>
+                                    <li><strong>可扩展</strong>：模块化架构允许逐步添加语言特性，适合作为编译器课程的教学参考。</li>
+                                </ul>
+
+                                <h2>架构概览</h2>
+                                <p>Ae 的编译-执行流程分为三个阶段：</p>
+                                <div class="doc-flow">
+                                    <div class="doc-flow-step">
+                                        <span class="doc-flow-num">1</span>
+                                        <div>
+                                            <strong>编译</strong>
+                                            <p><code>aec</code> 将 <code>.ae</code> 源码编译为 <code>.aeo</code> 字节码</p>
+                                        </div>
+                                    </div>
+                                    <div class="doc-flow-arrow">→</div>
+                                    <div class="doc-flow-step">
+                                        <span class="doc-flow-num">2</span>
+                                        <div>
+                                            <strong>执行</strong>
+                                            <p><code>ae</code> 加载并解释执行字节码</p>
+                                        </div>
+                                    </div>
+                                    <div class="doc-flow-arrow">→</div>
+                                    <div class="doc-flow-step">
+                                        <span class="doc-flow-num">3</span>
+                                        <div>
+                                            <strong>调试</strong>
+                                            <p><code>aed</code> 反汇编字节码为可读格式</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="doc-callout">
+                                    <strong>版本说明</strong>
+                                    <p>当前版本为 v1.0，字节码格式版本号为 1.0（文件头 <code>major=1, minor=0</code>）。本文档描述的语言规范与字节码格式以 v1.0 为准。</p>
+                                </div>
+                            </article>
+
+                            <!-- 安装与构建 -->
+                            <article class="doc-section" id="doc-install">
+                                <h1>安装与构建</h1>
+                                <p>Ae 的工具链以三个独立的 C++ 源文件分发：<code>aec.cpp</code>（编译器）、<code>ae.cpp</code>（虚拟机）和 <code>aed.cpp</code>（反汇编器）。三者均可独立编译为可执行文件。</p>
+
+                                <h2>系统要求</h2>
+                                <ul class="doc-list">
+                                    <li>C++ 编译器支持 C++11 或更高标准（GCC 4.8+、Clang 3.3+、MSVC 2015+）</li>
+                                    <li>操作系统：Windows / Linux / macOS / Android (Termux)</li>
+                                    <li>无第三方库依赖</li>
+                                </ul>
+
+                                <h2>从源码编译</h2>
+                                <p>克隆仓库后，使用以下命令编译全部三个工具：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="comment"># Linux / macOS / Android (Termux)</span>
+g++ -O2 -o aec aec.cpp
+g++ -O2 -o ae  ae.cpp
+g++ -O2 -o aed aed.cpp</pre>
+                                    </div>
+                                </div>
+
+                                <p>在 Windows 上使用 MinGW 或 MSVC：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="comment"># MinGW</span>
+g++ -O2 -o aec.exe aec.cpp
+g++ -O2 -o ae.exe  ae.cpp
+g++ -O2 -o aed.exe aed.cpp</pre>
+                                    </div>
+                                </div>
+
+                                <h2>验证安装</h2>
+                                <p>编译成功后，可通过运行虚拟机验证：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="prompt">$</span> ./ae --help
+<span class="output">Ae 虚拟机 (ae) - 输入字节码文件路径: </span></pre>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <!-- 快速开始 -->
+                            <article class="doc-section" id="doc-quickstart">
+                                <h1>快速开始</h1>
+                                <p>本节通过一个完整的示例，演示 Ae 程序从编写到执行的完整流程。</p>
+
+                                <h2>第一个程序</h2>
+                                <p>创建文件 <code>hello.ae</code>：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-header">
+                                        <div class="code-dots"><span></span><span></span><span></span></div>
+                                        <span class="code-filename">hello.ae</span>
+                                    </div>
+                                    <div class="code-body">
+<pre><span class="comment">// 判断一个数是否为素数</span>
+<span class="funcDef">func</span> <span class="funcName">isPrime</span>(<span class="param">n</span>) {
+    <span class="kw">if</span> (n &lt; <span class="num">2</span>) { <span class="kw">return</span> <span class="bool">false</span> }
+    <span class="kw">if</span> (n == <span class="num">2</span>) { <span class="kw">return</span> <span class="bool">true</span> }
+
+    <span class="type">int</span> i = <span class="num">2</span>
+    <span class="kw">while</span> (i * i &lt;= n) {
+        <span class="kw">if</span> (n % i == <span class="num">0</span>) { <span class="kw">return</span> <span class="bool">false</span> }
         i = i + <span class="num">1</span>
     }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- 特性 -->
-<section class="section">
-<div class="container">
-<h2 class="section-title">设计理念</h2>
-<div class="grid grid-3">
-<article class="card">
-<div class="card-icon">⚙️</div>
-<h3>真实字节码</h3>
-<p>源码编译为 <code>.aeo</code> 字节码文件，含 16 字节文件头、常量池与指令流。可经反汇编器 <code>aed</code> 还原助记符，学习编译与虚拟机原理的绝佳样本。</p>
-</article>
-<article class="card">
-<div class="card-icon">🔢</div>
-<h3>四类型值系统</h3>
-<p>运行时采用 Tagged Value 表示 <code>int</code>、<code>double</code>、<code>string</code>、<code>bool</code> 四种类型，整数与浮点运算指令分离，赋值时自动依类型分派。</p>
-</article>
-<article class="card">
-<div class="card-icon">📚</div>
-<h3>函数与递归</h3>
-<p>原生支持自定义函数、参数传递、局部变量与作用域隔离。递归调用通过独立的调用帧（CallFrame）实现，函数表支持前向引用。</p>
-</article>
-<article class="card">
-<div class="card-icon">🪶</div>
-<h3>极致轻量</h3>
-<p>整个运行时（VM + 编译器 + 反汇编器）仅三个 C++ 源文件，不依赖任何第三方库。一份源码即可在 Windows、Linux、Android 上编译运行。</p>
-</article>
-<article class="card">
-<div class="card-icon">🌐</div>
-<h3>跨平台</h3>
-<p>字节码一次编译、处处运行。为 Windows、Linux、Android 提供独立运行时环境包，无需安装，开箱即用。</p>
-</article>
-<article class="card">
-<div class="card-icon">🎨</div>
-<h3>完整工具链</h3>
-<p><code>aec</code> 编译、<code>ae</code> 执行、<code>aed</code> 反汇编，构成从源码到运行的完整闭环，并配有官方编辑器语法高亮主题。</p>
-</article>
-</div>
-</div>
-</section>
-
-<!-- 工具链架构 -->
-<section class="section section-alt">
-<div class="container">
-<h2 class="section-title">工具链架构</h2>
-<div class="pipeline">
-<div class="pipe-step">
-<div class="pipe-label">源码</div>
-<div class="pipe-name">.ae 文件</div>
-</div>
-<div class="pipe-arrow">→</div>
-<div class="pipe-step">
-<div class="pipe-label">编译器</div>
-<div class="pipe-name">aec</div>
-</div>
-<div class="pipe-arrow">→</div>
-<div class="pipe-step">
-<div class="pipe-label">字节码</div>
-<div class="pipe-name">.aeo 文件</div>
-</div>
-<div class="pipe-arrow">→</div>
-<div class="pipe-step">
-<div class="pipe-label">虚拟机</div>
-<div class="pipe-name">ae</div>
-</div>
-<div class="pipe-arrow">→</div>
-<div class="pipe-step">
-<div class="pipe-label">输出</div>
-<div class="pipe-name">stdout</div>
-</div>
-</div>
-<p class="pipeline-note">
-可选环节：<code>aed</code> 可将任意 <code>.aeo</code> 字节码文件反汇编为带常量池与指令地址的人类可读文本，便于调试与学习。
-</p>
-</div>
-</section>
-
-<!-- 快速开始 -->
-<section class="section">
-<div class="container">
-<h2 class="section-title">快速开始</h2>
-<div class="grid grid-2">
-<div>
-<h3 class="sub-title">1. 编译源码</h3>
-<p class="muted">使用 <code>aec</code> 将 <code>.ae</code> 源文件编译为 <code>.aeo</code> 字节码：</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">终端</span></div>
-<div class="code-body code-body-cmd">
-<pre><code><span class="comment"># 编译：输入 .ae，输出 .aeo</span>
-<span class="prompt">$</span> aec hello.ae
-<span class="comment"># 也可指定输出路径</span>
-<span class="prompt">$</span> aec hello.ae out.aeo</code></pre>
-</div>
-</div>
-
-<h3 class="sub-title">2. 运行程序</h3>
-<p class="muted">将字节码交给虚拟机 <code>ae</code> 执行：</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">终端</span></div>
-<div class="code-body code-body-cmd">
-<pre><code><span class="prompt">$</span> ae hello.aeo
-<span class="output">Hello, Ae!</span></code></pre>
-</div>
-</div>
-
-<h3 class="sub-title">3. 反汇编（可选）</h3>
-<p class="muted">用 <code>aed</code> 查看字节码内部结构：</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">终端</span></div>
-<div class="code-body code-body-cmd">
-<pre><code><span class="prompt">$</span> aed hello.aeo
-<span class="output">; Magic: AeBc  Version: 1.0</span>
-<span class="output">; ── Constant Pool ...</span></code></pre>
-</div>
-</div>
-</div>
-
-<div>
-<h3 class="sub-title">你的第一个程序</h3>
-<div class="code-window">
-<div class="code-title">
-<span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-<span class="code-title-text">hello.ae</span>
-</div>
-<div class="code-body">
-<pre><code><span class="kw">main</span> {
-    <span class="builtin">prln</span>(<span class="str">"你好，世界"</span>)
-    <span class="builtin">prln</span>(<span class="str">"1 + 2 = "</span>, <span class="num">1</span> + <span class="num">2</span>)
-
-    <span class="kw">local</span> <span class="local-var">name</span> = <span class="builtin">inp</span>(<span class="str">"你的名字: "</span>)
-    <span class="builtin">prln</span>(<span class="str">"你好, "</span>, name)
-}</code></pre>
-</div>
-</div>
-<p class="muted small">
-上述程序演示了字符串拼接输出、算术运算、局部变量声明与输入函数 <code>inp()</code>。
-保存为 <code>hello.ae</code>，按左侧步骤编译运行即可。
-</p>
-<div class="tip">
-<b>提示：</b>命令行可省略文件路径——直接运行 <code>ae</code> 或 <code>aec</code> 会进入交互式提示，按提示输入即可。
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- CTA -->
-<section class="section section-cta">
-<div class="container cta-inner">
-<h2>准备好开始了吗？</h2>
-<p class="muted">完整语法、类型系统、内置函数与字节码规范，尽在官方文档。</p>
-<a href="#/docs" class="btn btn-primary" onclick="navigate('/docs')">进入文档 →</a>
-</div>
-</section>
-</main>
-
-<!-- ========== 文档页 ========== -->
-<main id="page-docs" class="page hidden">
-<div class="docs-layout">
-<!-- 文档侧边栏 -->
-<aside class="docs-side">
-<div class="docs-side-inner">
-<div class="side-title">文档</div>
-<nav class="side-nav">
-<a href="#/docs#intro" class="side-link" onclick="navigate('/docs');scrollToHash('intro')">语言概述</a>
-<a href="#/docs#lex" class="side-link" onclick="navigate('/docs');scrollToHash('lex')">词法与注释</a>
-<a href="#/docs#types" class="side-link" onclick="navigate('/docs');scrollToHash('types')">类型系统</a>
-<a href="#/docs#vars" class="side-link" onclick="navigate('/docs');scrollToHash('vars')">变量与作用域</a>
-<a href="#/docs#funcs" class="side-link" onclick="navigate('/docs');scrollToHash('funcs')">函数</a>
-<a href="#/docs#control" class="side-link" onclick="navigate('/docs');scrollToHash('control')">控制流</a>
-<a href="#/docs#ops" class="side-link" onclick="navigate('/docs');scrollToHash('ops')">运算符</a>
-<a href="#/docs#builtin" class="side-link" onclick="navigate('/docs');scrollToHash('builtin')">内置函数</a>
-<a href="#/docs#bc" class="side-link" onclick="navigate('/docs');scrollToHash('bc')">字节码规范</a>
-<a href="#/docs#vm" class="side-link" onclick="navigate('/docs');scrollToHash('vm')">虚拟机</a>
-<a href="#/docs#toolchain" class="side-link" onclick="navigate('/docs');scrollToHash('toolchain')">工具链</a>
-<a href="#/docs#err" class="side-link" onclick="navigate('/docs');scrollToHash('err')">错误处理</a>
-</nav>
-</div>
-</aside>
-
-<!-- 文档正文 -->
-<article class="docs-content">
-<div class="container docs-container">
-
-<!-- 概述 -->
-<section id="intro" class="doc-section">
-<span class="doc-eyebrow">语言参考</span>
-<h1>Ae 语言文档</h1>
-<p class="lead">
-Ae 是一门<a href="#types">强类型</a>、<a href="#funcs">支持递归函数</a>的字节码型编程语言。程序由 <code>.ae</code> 源文件构成，
-经 <a href="#toolchain">编译器 <code>aec</code></a> 翻译为 <code>.aeo</code> 字节码，最终由 <a href="#vm">虚拟机 <code>ae</code></a> 解释执行。
-本文档描述 Ae 1.0（字节码版本 1.0，魔数 <code>AeBc</code>）的语言规范与实现。
-</p>
-
-<div class="callout">
-<b>设计目标：</b>以最少的代码量实现一个"五脏俱全"的语言——具备变量、函数、递归、四则运算、条件与循环，
-同时保持字节码格式清晰可读，便于教学与二次开发。整个运行时仅三个 C++ 文件，无第三方依赖。
-</div>
-
-<h2>程序结构</h2>
-<p>一个 Ae 源文件由若干<strong>函数定义</strong>与一个可选的 <code>main</code> 块组成。函数必须定义在使用之前的作用域顶层（编译器会预处理建立函数表，故调用可出现在定义之前）。<code>main</code> 块是程序的入口点，其执行完毕后程序终止。</p>
-
-<div class="code-window">
-<div class="code-title"><span class="code-title-text">结构示例</span></div>
-<div class="code-body">
-<pre><code><span class="comment">// 函数定义（顶层）</span>
-<span class="kw">func</span> <span class="func-name">add</span>(<span class="param">a</span>, <span class="param">b</span>) {
-    <span class="kw">return</span> a + b
+    <span class="kw">return</span> <span class="bool">true</span>
 }
 
-<span class="comment">// 入口块</span>
 <span class="kw">main</span> {
-    <span class="builtin">prln</span>(<span class="func-call">add</span>(<span class="num">3</span>, <span class="num">4</span>))   <span class="comment">// 输出 7</span>
-}</code></pre>
-</div>
-</div>
-</section>
+    <span class="type">int</span> count = <span class="num">0</span>
+    <span class="type">int</span> n = <span class="num">2</span>
+    <span class="kw">while</span> (count &lt; <span class="num">10</span>) {
+        <span class="kw">if</span> (<span class="funcCall">isPrime</span>(n)) {
+            <span class="builtin">pr</span>(n)
+            count = count + <span class="num">1</span>
+        }
+        n = n + <span class="num">1</span>
+    }
+}</pre>
+                                    </div>
+                                </div>
 
-<!-- 词法 -->
-<section id="lex" class="doc-section">
-<h2>词法与注释</h2>
-<p>Ae 的词法分析器（Lexer）定义在 <code>aec.cpp</code> 中，支持以下 Token 类别：标识符、关键字、字面量（整数、浮点数、字符串、布尔值）、运算符与分隔符。</p>
+                                <h2>编译与运行</h2>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="prompt">$</span> aec hello.ae
+<span class="output">✓ 编译成功: hello.ae → hello.aeo</span>
+<span class="output">  常量池: 6 项</span>
+<span class="output">  全局变量: 0 个</span>
+<span class="output">  函数: 1 个</span>
 
-<h3>注释</h3>
-<p>Ae 仅支持单行注释，以 <code>//</code> 开头，直至行末。注释内的内容不参与编译。</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">示例</span></div>
-<div class="code-body">
-<pre><code><span class="comment">// 这是一条注释</span>
-<span class="builtin">prln</span>(<span class="str">"代码"</span>)  <span class="comment">// 行尾注释</span></code></pre>
-</div>
-</div>
+<span class="prompt">$</span> ae hello.aeo
+<span class="output">2 3 5 7 11 13 17 19 23 29</span></pre>
+                                    </div>
+                                </div>
 
-<h3>标识符</h3>
-<p>标识符以字母或下划线开头，后可跟字母、数字或下划线：<code>[A-Za-z_][A-Za-z0-9_]*</code>。标识符区分大小写。</p>
+                                <h2>反汇编</h2>
+                                <p>使用 <code>aed</code> 查看生成的字节码：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="prompt">$</span> aed hello.aeo
+<span class="output">; ╔══════════════════════════════════════════════════════════╗</span>
+<span class="output">; ║  Ae Bytecode Disassembly  (hello.aeo)</span>
+<span class="output">; ╠══════════════════════════════════════════════════════════╣</span>
+<span class="output">; ║  Magic: AeBc  Version: 1.0</span>
+<span class="output">; ╚══════════════════════════════════════════════════════════╝</span>
+<span class="output">; ── Constant Pool (6 entries) ───────────────</span>
+<span class="output">  #  0  int32  2</span>
+<span class="output">  #  1  int32  1</span>
+<span class="output">  #  2  int32  0</span>
+<span class="output">  ...</span>
+<span class="output">; ── Code ───────────────────────────────────</span>
+<span class="output">     0: FUNC_DEF   fid=3 params=1 locals=1 codesize=68</span>
+<span class="output">     ...</span></pre>
+                                    </div>
+                                </div>
+                            </article>
 
-<h3>字面量</h3>
-<ul class="doc-list">
-<li><b>整数：</b>十进制整数，如 <code>42</code>、<code>-7</code>。编译期以 int32 存入常量池。</li>
-<li><b>浮点数：</b>含小数点的数，如 <code>3.14</code>、<code>.5</code>、<code>2.</code>，均按 double 处理。</li>
-<li><b>字符串：</b>双引号或单引号包裹，支持反斜杠转义 <code>\"</code>、<code>\\</code> 等。</li>
-<li><b>布尔值：</b>关键字 <code>true</code>、<code>false</code>，运行时以整数 1 / 0 表示。</li>
-</ul>
+                            <!-- 类型系统 -->
+                            <article class="doc-section" id="doc-types">
+                                <h1>类型系统</h1>
+                                <p>Ae 是一种<strong>静态类型</strong>语言，变量在声明时必须显式标注类型。运行时采用<strong>类型化标签值（Tagged Value）</strong>模型，每个值携带类型标签，支持在运行时进行类型检查。</p>
 
-<h3>关键字（保留字）</h3>
-<p class="muted">以下标识符被语言保留，不可用作变量或函数名：</p>
-<div class="kw-table">
-<span class="kw-pill">func</span>
-<span class="kw-pill">main</span>
-<span class="kw-pill">if</span>
-<span class="kw-pill">else</span>
-<span class="kw-pill">while</span>
-<span class="kw-pill">break</span>
-<span class="kw-pill">continue</span>
-<span class="kw-pill">return</span>
-<span class="kw-pill">local</span>
-<span class="kw-pill">true</span>
-<span class="kw-pill">false</span>
-<span class="kw-pill">pr</span>
-<span class="kw-pill">prln</span>
-<span class="kw-pill">inp</span>
-</div>
-<p class="muted small">注：<code>pr</code>、<code>prln</code>、<code>inp</code> 虽为内置函数，但在词法层面被识别为标识符，故不严格保留——但强烈建议不要覆盖。</p>
-</section>
+                                <h2>内置类型</h2>
+                                <p>Ae 提供四种内置数据类型：</p>
 
-<!-- 类型系统 -->
-<section id="types" class="doc-section">
-<h2>类型系统</h2>
-<p>Ae 是静态语义、动态存储的强类型语言：每个值在运行时携带类型标签（Tagged Value），运算按类型分派。语言提供四种内置类型：</p>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr>
+                                            <th>类型</th>
+                                            <th>关键字</th>
+                                            <th>存储</th>
+                                            <th>说明</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code class="type">int</code></td>
+                                            <td><code>int</code></td>
+                                            <td>64 位有符号整数</td>
+                                            <td>整数类型，支持算术与比较运算</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="type">double</code></td>
+                                            <td><code>double</code></td>
+                                            <td>64 位 IEEE 754 浮点数</td>
+                                            <td>浮点数类型，支持浮点算术与比较</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="type">string</code></td>
+                                            <td><code>string</code></td>
+                                            <td>引用计数的字符串对象</td>
+                                            <td>UTF-8 字符串，支持 <code>+</code> 拼接</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="type">bool</code></td>
+                                            <td><code>bool</code></td>
+                                            <td>标签值（底层为 int）</td>
+                                            <td>布尔类型，字面量为 <code>true</code> / <code>false</code></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-<table class="doc-table">
-<thead><tr><th>类型</th><th>字面量示例</th><th>说明</th></tr></thead>
-<tbody>
-<tr><td><code class="type">int</code></td><td><code>42</code>, <code>-1</code></td><td>64 位有符号整数（编译期以 int32 存常量池，运行时提升至 int64）</td></tr>
-<tr><td><code class="type">double</code></td><td><code>3.14</code>, <code>.5</code></td><td>64 位双精度浮点数</td></tr>
-<tr><td><code class="type">string</code></td><td><code>"hello"</code></td><td>UTF-8 字符串，以引用计数 <code>shared_ptr</code> 管理</td></tr>
-<tr><td><code class="type">bool</code></td><td><code>true</code>, <code>false</code></td><td>布尔值，底层以整数 0/1 表示</td></tr>
-</tbody>
-</table>
+                                <h2>类型提升规则</h2>
+                                <p>当 <code>int</code> 与 <code>double</code> 在表达式中出现混合运算时，编译器自动将 <code>int</code> 提升为 <code>double</code>，结果类型为 <code>double</code>。该过程由 <code>ITOD</code>（0x0E）指令实现。</p>
 
-<h3>类型与运算</h3>
-<p>算术与比较运算分为<strong>整数</strong>与<strong>浮点</strong>两套指令。当操作数中任一为 <code>double</code> 时，编译器自动插入 <code>ITOD</code>（int→double 转换）并将运算提升为浮点版本；否则使用整数指令。</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">类型提升</span></div>
-<div class="code-body">
-<pre><code><span class="num">3</span> + <span class="num">2</span>        <span class="comment">// IADD（整数加法）</span>
-<span class="num">3</span> + <span class="num">2.0</span>      <span class="comment">// 3 提升为 double → FADD</span>
-<span class="num">3.14</span> * <span class="num">2</span>      <span class="comment">// 2 提升为 double → FMUL</span></code></pre>
-</div>
-</div>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="type">int</span> a = <span class="num">10</span>
+<span class="type">double</span> b = <span class="num">3.14</span>
+<span class="type">double</span> c = a + b    <span class="comment">// a 自动提升为 double, 结果为 13.14</span></pre>
+                                    </div>
+                                </div>
 
-<div class="callout callout-warn">
-<b>隐式转换：</b>仅发生在算术表达式的自动提升中。字符串与数值之间<strong>不会</strong>自动互转；布尔值在算术上下文中按 0/1 参与计算。
-</div>
-</section>
+                                <h3>比较运算的类型匹配</h3>
+                                <p>比较运算符（<code>== != &lt; &lt;= &gt; &gt;=</code>）在编译期根据操作数类型选择整型指令（<code>IEQ/ILT/IGT...</code>，0x10–0x15）或浮点指令（<code>FCMP_EQ/FCMP_LT...</code>，0x16–0x1B）：</p>
+                                <ul class="doc-list">
+                                    <li>两侧均为 <code>int</code> → 生成整型比较指令</li>
+                                    <li>任意一侧为 <code>double</code> → 生成浮点比较指令（必要时插入 <code>ITOD</code>）</li>
+                                </ul>
 
-<!-- 变量与作用域 -->
-<section id="vars" class="doc-section">
-<h2>变量与作用域</h2>
-<p>Ae 采用词法作用域，变量分为<strong>全局变量</strong>与<strong>局部变量</strong>两类，各自拥有独立的存储区（全局槽、局部槽）。</p>
+                                <h2>字符串类型</h2>
+                                <p>字符串以双引号 <code>"</code> 或单引号 <code>'</code> 界定，支持转义序列（如 <code>\"</code>、<code>\\</code>）。字符串拼接使用 <code>+</code> 运算符。</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="type">string</span> s = <span class="str">"Hello, "</span> + <span class="str">"World"</span>  <span class="comment">// "Hello, World"</span>
+<span class="type">string</span> p = <span class="str">'单引号也可以'</span></pre>
+                                    </div>
+                                </div>
+                            </article>
 
-<h3>全局变量</h3>
-<p>在 <code>main</code> 块或顶层语句中，首次出现的赋值会自动创建全局变量：</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">全局变量</span></div>
-<div class="code-body">
-<pre><code>x = <span class="num">10</span>          <span class="comment">// 创建全局变量 x</span>
-y = x + <span class="num">5</span>       <span class="comment">// 读取全局 x，创建 y</span>
-x += <span class="num">1</span>          <span class="comment">// 复合赋值</span></code></pre>
-</div>
-</div>
+                            <!-- 变量与作用域 -->
+                            <article class="doc-section" id="doc-vars">
+                                <h1>变量与作用域</h1>
+                                <p>Ae 采用<strong>词法作用域（静态作用域）</strong>规则，变量的可见性在编译期确定。系统维护三个层级的作用域：</p>
 
-<h3>局部变量</h3>
-<p>在函数内部，必须使用 <code>local</code> 关键字声明局部变量。局部变量与全局变量、其他函数的局部变量相互隔离：</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">局部变量</span></div>
-<div class="code-body">
-<pre><code><span class="kw">func</span> <span class="func-name">foo</span>() {
-    <span class="kw">local</span> <span class="local-var">x</span> = <span class="num">100</span>   <span class="comment">// 局部变量，仅 foo 可见</span>
+                                <h2>全局变量</h2>
+                                <p>在 <code>main</code> 块或函数外部直接赋值的变量为全局变量，存储在全局变量槽（Global Slots）中，通过 <code>STORE</code>（0x04）和 <code>LOAD_VAR</code>（0x05）指令访问。</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="kw">main</span> {
+    x = <span class="num">42</span>       <span class="comment">// 全局变量，自动分配 slot</span>
+    <span class="builtin">prln</span>(x)     <span class="comment">// 输出 42</span>
+}</pre>
+                                    </div>
+                                </div>
+
+                                <h2>局部变量</h2>
+                                <p>局部变量通过 <code>local</code> 关键字声明，仅存在于函数调用帧（Call Frame）中，通过 <code>LOCAL_STORE</code>（0x30）和 <code>LOCAL_LOAD</code>（0x31）指令访问。参数也被视为局部变量，位于局部变量区的前部。</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="funcDef">func</span> <span class="funcName">calc</span>(<span class="param">a</span>, <span class="param">b</span>) {
+    <span class="kw">local</span> sum = a + b      <span class="comment">// 局部变量</span>
+    <span class="kw">local</span> prod = a * b     <span class="comment">// 局部变量</span>
+    <span class="kw">return</span> sum + prod
+}</pre>
+                                    </div>
+                                </div>
+
+                                <h2>作用域规则</h2>
+                                <ul class="doc-list">
+                                    <li>函数内部优先查找局部变量（含参数），未找到时回退到全局变量。</li>
+                                    <li><code>local</code> 声明只能在函数体内使用，在函数外使用会触发编译错误。</li>
+                                    <li>不同函数拥有独立的局部变量空间，互不影响。</li>
+                                    <li>递归调用时，每次调用创建独立的调用帧，局部变量完全隔离。</li>
+                                </ul>
+
+                                <h2>复合赋值</h2>
+                                <p>Ae 支持复合赋值运算符 <code>+= -= *= /=</code>，它们结合变量查找与算术运算：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre>x += <span class="num">10</span>    <span class="comment">// 等价于 x = x + 10 (浮点加法 FADD)</span>
+count -= <span class="num">1</span>   <span class="comment">// 等价于 count = count - 1</span></pre>
+                                    </div>
+                                </div>
+                            </article>
+
+                            <!-- 函数 -->
+                            <article class="doc-section" id="doc-functions">
+                                <h1>函数</h1>
+                                <p>函数是 Ae 的核心抽象机制。函数通过 <code>func</code> 关键字定义，支持参数传递、局部变量和递归调用。</p>
+
+                                <h2>函数定义</h2>
+                                <p>函数必须在 <code>main</code> 之外（源码顶部）定义，语法如下：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="funcDef">func</span> <span class="funcName">name</span>(param1, param2, ...) {
+    <span class="kw">local</span> x = <span class="num">10</span>
     <span class="kw">return</span> x
-}</code></pre>
-</div>
-</div>
+}</pre>
+                                    </div>
+                                </div>
 
-<h3>参数</h3>
-<p>函数参数本质上是位于局部变量区前部的局部变量，按声明顺序依次绑定。</p>
+                                <h3>规则</h3>
+                                <ul class="doc-list">
+                                    <li>函数名后紧跟参数列表（可为空），参数视为局部变量。</li>
+                                    <li><code>local</code> 声明和参数共同构成局部变量区，按声明顺序分配 slot。</li>
+                                    <li>支持递归调用——调用栈由 <code>CallFrame</code> 结构管理。</li>
+                                    <li><code>return</code> 可返回任意类型的值；若函数体末尾无 <code>return</code>，编译器自动插入 <code>return 0</code>。</li>
+                                    <li>用户自定义函数 ID 从 3 开始（0/1/2 保留给内置函数）。</li>
+                                </ul>
 
-<table class="doc-table">
-<thead><tr><th>特性</th><th>全局变量</th><th>局部变量</th></tr></thead>
-<tbody>
-<tr><td>声明方式</td><td>首次赋值自动创建</td><td><code>local name = expr</code></td></tr>
-<tr><td>作用域</td><td>整个程序</td><td>所在函数体</td></tr>
-<tr><td>存储</td><td>全局变量槽（<code>STORE</code>/<code>LOAD_VAR</code>）</td><td>调用帧局部区（<code>LOCAL_STORE</code>/<code>LOCAL_LOAD</code>）</td></tr>
-<tr><td>生命周期</td><td>程序运行期</td><td>函数调用期</td></tr>
-</tbody>
-</table>
+                                <h2>函数调用</h2>
+                                <p>调用函数时，实参按从左到右的顺序求值并压栈，然后执行 <code>CALL_FUNC</code>（0x41）指令。虚拟机从栈顶弹出参数，创建新的调用帧（CallFrame），将参数写入局部变量区，然后跳转到函数入口。</p>
 
-<div class="callout callout-warn">
-<b>作用域规则：</b>在函数内访问变量时，优先查找局部作用域，未命中再查找全局。因此局部变量会"遮蔽"同名全局变量。<code>local</code> 只能在函数内部使用，在函数外使用会引发编译错误。
-</div>
-</section>
-
-<!-- 函数 -->
-<section id="funcs" class="doc-section">
-<h2>函数</h2>
-<p>函数是 Ae 的一等组织单元，通过 <code>func</code> 关键字定义。函数拥有独立的参数列表、局部变量区与返回逻辑，并通过调用栈支持<strong>递归</strong>。</p>
-
-<h3>定义</h3>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">语法</span></div>
-<div class="code-body">
-<pre><code><span class="kw">func</span> <span class="func-name">name</span>(param1, param2, ...) {
-    <span class="comment">// 函数体</span>
-    <span class="kw">return</span> value
-}</code></pre>
-</div>
-</div>
-
-<ul class="doc-list">
-<li>函数<strong>必须定义在顶层</strong>（<code>main</code> 之外）。</li>
-<li>参数与 <code>local</code> 声明均为局部变量，彼此隔离于全局作用域。</li>
-<li>支持<strong>递归调用</strong>：每次调用创建独立的调用帧。</li>
-<li><code>return</code> 可返回任意类型值；若缺省，函数默认返回整数 <code>0</code>。</li>
-</ul>
-
-<h3>参数与返回值</h3>
-<div class="code-window">
-<div class="code-title"><span class="code-title-text">函数示例</span></div>
-<div class="code-body">
-<pre><code><span class="comment">// 阶乘（递归）</span>
-<span class="kw">func</span> <span class="func-name">fact</span>(<span class="param">n</span>) {
+                                <h3>递归示例</h3>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="comment">// 阶乘</span>
+<span class="funcDef">func</span> <span class="funcName">fact</span>(<span class="param">n</span>) {
     <span class="kw">if</span> (n &lt;= <span class="num">1</span>) {
         <span class="kw">return</span> <span class="num">1</span>
     }
-    <span class="kw">return</span> n * <span class="func-call">fact</span>(n - <span class="num">1</span>)
+    <span class="kw">return</span> n * <span class="funcCall">fact</span>(n - <span class="num">1</span>)  <span class="comment">// 递归调用</span>
 }
 
 <span class="kw">main</span> {
-    <span class="builtin">prln</span>(<span class="func-call">fact</span>(<span class="num">5</span>))   <span class="comment">// 输出 120</span>
-}</code></pre>
-</div>
-</div>
+    <span class="builtin">prln</span>(<span class="funcCall">fact</span>(<span class="num">5</span>))  <span class="comment">// 输出 120</span>
+}</pre>
+                                    </div>
+                                </div>
 
-<div class="callout">
-<b>前向引用：</b>虚拟机启动时会对字节码做一次预扫描（<code>preScanFunctions</code>），建立完整的函数表，因此<strong>调用可出现在定义之前</strong>，无需前向声明。
-</div>
+                                <h2>调用约定</h2>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>步骤</th><th>操作</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>1</td><td>按从左到右顺序求值实参表达式，结果压入操作数栈</td></tr>
+                                        <tr><td>2</td><td>执行 <code>CALL_FUNC funcId argc</code></td></tr>
+                                        <tr><td>3</td><td>VM 从栈顶弹出 <code>argc</code> 个值，写入新帧的局部变量区</td></tr>
+                                        <tr><td>4</td><td>保存当前 PC 为返回地址，设置 <code>currentLocals</code> 指向新帧</td></tr>
+                                        <tr><td>5</td><td>PC 跳转到函数入口，开始执行函数体</td></tr>
+                                        <tr><td>6</td><td>遇到 <code>RET</code>（0x42）时，弹出帧，恢复返回地址</td></tr>
+                                    </tbody>
+                                </table>
 
-<h3>调用约定</h3>
-<ul class="doc-list">
-<li>用户自定义函数调用：<code>name(arg1, arg2, ...)</code>，参数数量必须与定义时一致，否则编译报错。</li>
-<li>内置函数（<code>pr</code>、<code>prln</code>、<code>inp</code>）调用方式相同，但使用独立的调用指令。</li>
-<li>若函数调用作为<strong>语句</strong>（返回值未被接收），编译器会自动插入 <code>POP</code> 指令丢弃返回值，避免污染操作数栈。</li>
-</ul>
-</section>
+                                <div class="doc-callout doc-callout-warning">
+                                    <strong>注意</strong>
+                                    <p>调用参数数量必须与函数定义时的参数数量严格匹配，否则编译器会报告"参数数量不匹配"错误。</p>
+                                </div>
+                            </article>
 
-<!-- 控制流 -->
-<section id="control" class="doc-section">
-<h2>控制流</h2>
+                            <!-- 控制流 -->
+                            <article class="doc-section" id="doc-control">
+                                <h1>控制流</h1>
+                                <p>Ae 提供条件分支、循环和跳转控制语句，编译为 <code>JZ</code>（0x2A）和 <code>JMP</code>（0x2B）字节码指令。</p>
 
-<h3>条件：<code>if / else</code></h3>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">语法</span></div>
-<div class="code-body">
-<pre><code><span class="kw">if</span> (condition) {
-    <span class="comment">// 为真时执行</span>
+                                <h2>if / else</h2>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="kw">if</span> (condition) {
+    <span class="comment">// 条件为真时执行</span>
 } <span class="kw">else</span> {
-    <span class="comment">// 为假时执行</span>
-}</code></pre>
-</div>
-</div>
-<p><code>else</code> 分支可选。条件判断使用"真值"语义：<code>bool</code> 的 <code>false</code>、整数 <code>0</code>、浮点 <code>0.0</code>、空字符串均视为假，其余为真。</p>
+    <span class="comment">// 条件为假时执行</span>
+}</pre>
+                                    </div>
+                                </div>
 
-<h3>循环：<code>while</code></h3>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">语法</span></div>
-<div class="code-body">
-<pre><code><span class="kw">while</span> (condition) {
+                                <p>条件表达式的结果被压入栈顶，<code>JZ</code> 指令检查栈顶值是否为"假"（整数 0、浮点 0.0、空字符串或布尔 <code>false</code>），若是则跳转到 <code>else</code> 块或 <code>if</code> 之后的代码。</p>
+
+                                <h2>while 循环</h2>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="kw">while</span> (condition) {
     <span class="comment">// 循环体</span>
-}</code></pre>
-</div>
-</div>
+}</pre>
+                                    </div>
+                                </div>
 
-<h3>跳转：<code>break</code> / <code>continue</code></h3>
-<p>在循环体内，<code>break</code> 立即退出循环，<code>continue</code> 跳转到下一次迭代的条件判断。两者均通过编译期回填（back-patching）实现跳转地址。</p>
-<div class="code-window">
-<div class="code-title"><span class="code-title-text">示例</span></div>
-<div class="code-body">
-<pre><code><span class="kw">local</span> <span class="local-var">i</span> = <span class="num">0</span>
-<span class="kw">while</span> (i &lt; <span class="num">10</span>) {
+                                <p>编译后的结构：</p>
+                                <ol class="doc-list">
+                                    <li>循环条件前的位置记为 <code>loopStart</code></li>
+                                    <li>求值条件，生成 <code>JZ</code> 占位（偏移待回填）</li>
+                                    <li>编译循环体</li>
+                                    <li>循环体末尾生成 <code>JMP</code> 跳回 <code>loopStart</code></li>
+                                    <li>回填 <code>JZ</code> 的跳转目标为循环结束位置</li>
+                                </ol>
+
+                                <h2>break 与 continue</h2>
+                                <p><code>break</code> 和 <code>continue</code> 用于在循环中进行跳转控制：</p>
+                                <ul class="doc-list">
+                                    <li><code>break</code>：跳出当前循环，生成 <code>JMP</code> 占位，跳转目标在循环结束时回填。</li>
+                                    <li><code>continue</code>：跳转到循环条件重新求值，生成 <code>JMP</code> 跳回 <code>loopStart</code>。</li>
+                                </ul>
+
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="type">int</span> i = <span class="num">0</span>
+<span class="kw">while</span> (i &lt; <span class="num">100</span>) {
     i = i + <span class="num">1</span>
-    <span class="kw">if</span> (i == <span class="num">5</span>) {
-        <span class="kw">continue</span>   <span class="comment">// 跳过 5</span>
+    <span class="kw">if</span> (i % <span class="num">7</span> == <span class="num">0</span>) {
+        <span class="kw">continue</span>  <span class="comment">// 跳过 7 的倍数</span>
     }
-    <span class="builtin">prln</span>(i)
-}</code></pre>
-</div>
-</div>
-</section>
+    <span class="kw">if</span> (i &gt; <span class="num">50</span>) {
+        <span class="kw">break</span>      <span class="comment">// 超过 50 退出循环</span>
+    }
+    <span class="builtin">pr</span>(i)
+}</pre>
+                                    </div>
+                                </div>
 
-<!-- 运算符 -->
-<section id="ops" class="doc-section">
-<h2>运算符</h2>
-<p>Ae 的运算符优先级（从高到低）与结合性如下表。表达式采用递归下降分析法解析。</p>
+                                <div class="doc-callout doc-callout-warning">
+                                    <strong>限制</strong>
+                                    <p><code>break</code> 和 <code>continue</code> 仅在 <code>while</code> 循环体内有效。嵌套循环时，它们仅作用于最内层循环。</p>
+                                </div>
+                            </article>
 
-<table class="doc-table">
-<thead><tr><th>优先级</th><th>运算符</th><th>说明</th><th>结合性</th></tr></thead>
-<tbody>
-<tr><td>1</td><td><code>()</code></td><td>括号 / 函数调用</td><td>—</td></tr>
-<tr><td>2</td><td><code>-</code>（前缀）</td><td>一元取负</td><td>右</td></tr>
-<tr><td>3</td><td><code>*</code> <code>/</code> <code>%</code></td><td>乘除取模</td><td>左</td></tr>
-<tr><td>4</td><td><code>+</code> <code>-</code></td><td>加减</td><td>左</td></tr>
-<tr><td>5</td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td>比较</td><td>左</td></tr>
-<tr><td>6</td><td><code>=</code> <code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code></td><td>赋值 / 复合赋值</td><td>右</td></tr>
-</tbody>
-</table>
+                            <!-- 运算符 -->
+                            <article class="doc-section" id="doc-operators">
+                                <h1>运算符与表达式</h1>
+                                <p>Ae 的表达式语法遵循标准的运算符优先级规则，采用递归下降解析。</p>
 
-<h3>算术运算符</h3>
-<ul class="doc-list">
-<li><code>+</code> <code>-</code> <code>*</code>：加、减、乘。操作数含 <code>double</code> 时自动提升为浮点运算。</li>
-<li><code>/</code>：除法。整数除法（<code>IDIV</code>）向零取整；浮点除法（<code>FDIV</code>）得 <code>double</code>。</li>
-<li><code>%</code>：取模（仅整数，<code>IMOD</code>）。</li>
-<li>一元 <code>-</code>：取负，对栈顶值计算 <code>0 - x</code>。</li>
-</ul>
+                                <h2>运算符优先级</h2>
+                                <p>从高到低排列：</p>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>优先级</th><th>运算符</th><th>结合性</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>1（最高）</td><td><code>()</code> 括号、<code>-</code> 一元负号</td><td>左</td></tr>
+                                        <tr><td>2</td><td><code>* / %</code></td><td>左</td></tr>
+                                        <tr><td>3</td><td><code>+ -</code></td><td>左</td></tr>
+                                        <tr><td>4</td><td><code>== != &lt; &lt;= &gt; &gt;=</code></td><td>无</td></tr>
+                                        <tr><td>5（最低）</td><td><code>= += -= *= /=</code></td><td>右</td></tr>
+                                    </tbody>
+                                </table>
 
-<h3>比较运算符</h3>
-<p>返回 <code>bool</code>。同样遵循整数 / 浮点分派规则：两侧任一为 <code>double</code> 即采用浮点比较指令（<code>FCMP_*</code>）。</p>
+                                <h2>算术运算符</h2>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>运算符</th><th>整型指令</th><th>浮点指令</th><th>说明</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td><code>+</code></td><td>IADD (0x06)</td><td>FADD (0x0A)</td><td>加法</td></tr>
+                                        <tr><td><code>-</code></td><td>ISUB (0x07)</td><td>FSUB (0x0B)</td><td>减法</td></tr>
+                                        <tr><td><code>*</code></td><td>IMUL (0x08)</td><td>FMUL (0x0C)</td><td>乘法</td></tr>
+                                        <tr><td><code>/</code></td><td>IDIV (0x09)</td><td>FDIV (0x0D)</td><td>除法</td></tr>
+                                        <tr><td><code>%</code></td><td>IMOD (0x0F)</td><td>—</td><td>取模（仅整型）</td></tr>
+                                        <tr><td><code>-</code>（一元）</td><td>ISUB</td><td>FSUB</td><td>取负</td></tr>
+                                    </tbody>
+                                </table>
 
-<h3>赋值运算符</h3>
-<p>支持 <code>=</code>、<code>+=</code>、<code>-=</code>、<code>*=</code>、<code>/=</code>。复合赋值会根据左右侧类型自动选择整数或浮点运算，并将结果写回变量。</p>
-</section>
+                                <h2>比较运算符</h2>
+                                <p>比较运算根据操作数类型生成不同的指令：</p>
+                                <ul class="doc-list">
+                                    <li>整型：<code>IEQ</code>(0x10) <code>INEQ</code>(0x11) <code>ILT</code>(0x12) <code>ILE</code>(0x13) <code>IGT</code>(0x14) <code>IGE</code>(0x15)</li>
+                                    <li>浮点：<code>FCMP_EQ</code>(0x16) <code>FCMP_NE</code>(0x17) <code>FCMP_LT</code>(0x18) <code>FCMP_LE</code>(0x19) <code>FCMP_GT</code>(0x1A) <code>FCMP_GE</code>(0x1B)</li>
+                                </ul>
 
-<!-- 内置函数 -->
-<section id="builtin" class="doc-section">
-<h2>内置函数</h2>
-<p>Ae 虚拟机内置三个函数，编号固定（<code>pr=0</code>、<code>inp=1</code>、<code>prln=2</code>），无需定义即可在任意作用域调用。它们通过专用调用指令 <code>CALL</code>（0x02）调用，与用户函数（<code>CALL_FUNC</code>）区分。</p>
+                                <h2>赋值与复合赋值</h2>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre>x = <span class="num">10</span>       <span class="comment">// 简单赋值</span>
+x += <span class="num">5</span>      <span class="comment">// x = x + 5  →  FADD</span>
+x -= <span class="num">3</span>      <span class="comment">// x = x - 3  →  FSUB</span>
+x *= <span class="num">2</span>      <span class="comment">// x = x * 2  →  FMUL</span>
+x /= <span class="num">4</span>      <span class="comment">// x = x / 4  →  FDIV</span></pre>
+                                    </div>
+                                </div>
 
-<table class="doc-table">
-<thead><tr><th>函数</th><th>ID</th><th>签名</th><th>说明</th></tr></thead>
-<tbody>
-<tr>
-<td><code class="builtin">pr</code></td><td>0</td>
-<td><code>pr(arg1, arg2, ...)</code></td>
-<td>将参数以空格分隔打印到标准输出，<strong>不</strong>换行。</td>
-</tr>
-<tr>
-<td><code class="builtin">prln</code></td><td>2</td>
-<td><code>prln(arg1, arg2, ...)</code></td>
-<td>同 <code>pr</code>，但末尾追加换行符。</td>
-</tr>
-<tr>
-<td><code class="builtin">inp</code></td><td>1</td>
-<td><code>inp(prompt?)</code></td>
-<td>打印提示（可选）并从标准输入读取一整行，返回 <code>string</code>。遇 EOF 抛错。</td>
-</tr>
-</tbody>
-</table>
+                                <div class="doc-callout doc-callout-warning">
+                                    <strong>错误处理</strong>
+                                    <p>整数除法（<code>IDIV</code>）和取模（<code>IMOD</code>）在除数为零时，虚拟机会抛出运行时错误 <code>整数除以零</code> 或 <code>取模除以零</code>。浮点除法（<code>FDIV</code>）同样会在除数为零时报错。</p>
+                                </div>
+                            </article>
 
-<div class="callout">
-<b>打印规则：</b><code>pr</code>/<code>prln</code> 可接受任意数量、任意类型的参数，按从左到右顺序打印，各项间以空格分隔。<code>string</code> 打印内容，<code>bool</code> 打印 <code>true</code>/<code>false</code>，浮点整数形式（如 <code>3.0</code>）打印为整数字面量。
-</div>
-</section>
+                            <!-- 内置函数 -->
+                            <article class="doc-section" id="doc-builtins">
+                                <h1>内置函数</h1>
+                                <p>Ae 虚拟机内置三个函数，函数 ID 固定为 0、1、2，由编译器直接映射。</p>
 
-<!-- 字节码规范 -->
-<section id="bc" class="doc-section">
-<h2>字节码规范（.aeo）</h2>
-<p>编译产物 <code>.aeo</code> 文件采用大端字节序，整体结构为：<strong>16 字节文件头 + 常量池 + 字节码流</strong>。反汇编器 <code>aed</code> 可将其还原为可读文本。</p>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>函数</th><th>ID</th><th>签名</th><th>说明</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><code class="builtin">pr</code></td>
+                                            <td>0</td>
+                                            <td><code>pr(args...)</code></td>
+                                            <td>打印所有参数，以空格分隔，不换行</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="builtin">prln</code></td>
+                                            <td>2</td>
+                                            <td><code>prln(args...)</code></td>
+                                            <td>打印所有参数，以空格分隔，末尾换行</td>
+                                        </tr>
+                                        <tr>
+                                            <td><code class="builtin">inp</code></td>
+                                            <td>1</td>
+                                            <td><code>inp() → string</code></td>
+                                            <td>从标准输入读取一行，返回字符串</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-<h3>文件头（16 字节）</h3>
-<table class="doc-table">
-<thead><tr><th>偏移</th><th>大小</th><th>字段</th><th>值</th></tr></thead>
-<tbody>
-<tr><td>0</td><td>4</td><td>magic</td><td><code>AeBc</code>（0x41 65 42 63）</td></tr>
-<tr><td>4</td><td>1</td><td>major</td><td>1</td></tr>
-<tr><td>5</td><td>1</td><td>minor</td><td>0</td></tr>
-<tr><td>6</td><td>2</td><td>flags</td><td>0（保留）</td></tr>
-<tr><td>8</td><td>4</td><td>constPoolCount</td><td>常量池条目数（u32）</td></tr>
-<tr><td>12</td><td>4</td><td>codeLength</td><td>字节码流长度（u32）</td></tr>
-</tbody>
-</table>
+                                <h2>pr / prln</h2>
+                                <p>两者行为一致，区别在于 <code>prln</code> 在末尾附加换行。它们接受任意数量的参数，参数之间以空格分隔。值的输出格式如下：</p>
+                                <ul class="doc-list">
+                                    <li><code>string</code>：直接输出字符串内容</li>
+                                    <li><code>bool</code>：输出 <code>true</code> 或 <code>false</code></li>
+                                    <li><code>double</code>：若为整数值（如 3.0）则输出整数部分（<code>3</code>），否则输出完整浮点数</li>
+                                    <li><code>int</code>：输出十进制整数</li>
+                                </ul>
 
-<h3>常量池</h3>
-<p>由 <code>constPoolCount</code> 个条目组成，每个条目格式为：<code>tag(1 字节) + length(4 字节, 大端) + data</code>。</p>
-<table class="doc-table">
-<thead><tr><th>Tag</th><th>类型</th><th>Data 编码</th></tr></thead>
-<tbody>
-<tr><td>0x01</td><td>UTF-8 字符串</td><td>length 字节的 UTF-8 数据</td></tr>
-<tr><td>0x02</td><td>int32</td><td>4 字节大端补码整数</td></tr>
-<tr><td>0x03</td><td>double</td><td>8 字节 IEEE 754（大端）</td></tr>
-</tbody>
-</table>
+                                <h2>inp</h2>
+                                <p><code>inp()</code> 从标准输入读取一行（不含换行符），返回 <code>string</code>。若遇到 EOF（文件结束），会抛出运行时错误。</p>
 
-<h3>指令集一览</h3>
-<div class="overflow-note">
-<table class="doc-table doc-table-mono">
-<thead><tr><th>OpCode</th><th>助记符</th><th>操作数</th><th>语义</th></tr></thead>
-<tbody>
-<tr><td>0x00</td><td>NOP</td><td>—</td><td>无操作</td></tr>
-<tr><td>0x01</td><td>LOAD_CONST</td><td>u16(idx)</td><td>栈压入常量池[idx]</td></tr>
-<tr><td>0x02</td><td>CALL</td><td>u8(id) u8(argc)</td><td>调用内置函数</td></tr>
-<tr><td>0x03</td><td>HALT</td><td>—</td><td>停机</td></tr>
-<tr><td>0x04</td><td>STORE</td><td>u16(slot)</td><td>栈顶 → 全局变量[slot]</td></tr>
-<tr><td>0x05</td><td>LOAD_VAR</td><td>u16(slot)</td><td>全局变量[slot] → 栈顶</td></tr>
-<tr><td>0x06–0x0D</td><td>IADD…FDIV</td><td>—</td><td>整数 / 浮点算术</td></tr>
-<tr><td>0x0E</td><td>ITOD</td><td>—</td><td>int64 → double</td></tr>
-<tr><td>0x0F</td><td>IMOD</td><td>—</td><td>整数取模</td></tr>
-<tr><td>0x10–0x15</td><td>IEQ…IGE</td><td>—</td><td>整数比较</td></tr>
-<tr><td>0x16–0x1B</td><td>FCMP_*</td><td>—</td><td>浮点比较</td></tr>
-<tr><td>0x2A</td><td>JZ</td><td>u16(offset)</td><td>栈顶为假时相对跳转</td></tr>
-<tr><td>0x2B</td><td>JMP</td><td>u16(offset)</td><td>无条件相对跳转</td></tr>
-<tr><td>0x30</td><td>LOCAL_STORE</td><td>u16(slot)</td><td>栈顶 → 局部变量[slot]</td></tr>
-<tr><td>0x31</td><td>LOCAL_LOAD</td><td>u16(slot)</td><td>局部变量[slot] → 栈顶</td></tr>
-<tr><td>0x40</td><td>FUNC_DEF</td><td>u16×3 u32</td><td>函数定义头</td></tr>
-<tr><td>0x41</td><td>CALL_FUNC</td><td>u16(id) u8(argc)</td><td>调用用户函数</td></tr>
-<tr><td>0x42</td><td>RET</td><td>—</td><td>从函数返回</td></tr>
-<tr><td>0x43</td><td>POP</td><td>—</td><td>丢弃栈顶值</td></tr>
-</tbody>
-</table>
-</div>
-<p class="muted small"><code>JZ</code>/<code>JMP</code> 的 offset 为有符号 16 位相对偏移，以跳转指令<strong>之后</strong>的位置为基准。</p>
-</section>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="builtin">pr</span>(<span class="str">"请输入你的名字: "</span>)
+<span class="type">string</span> name = <span class="builtin">inp</span>()
+<span class="builtin">prln</span>(<span class="str">"你好, "</span> + name)</pre>
+                                    </div>
+                                </div>
 
-<!-- 虚拟机 -->
-<section id="vm" class="doc-section">
-<h2>虚拟机（ae）</h2>
-<p>虚拟机是 Ae 的运行核心，以 C++ 实现于 <code>ae.cpp</code>，负责加载 <code>.aeo</code> 文件并逐条解释执行字节码。其核心数据结构如下：</p>
+                                <div class="doc-callout">
+                                    <strong>调用约定</strong>
+                                    <p>内置函数调用使用 <code>CALL</code>（0x02）指令，格式为 <code>CALL funcId argc</code>。与用户函数（<code>CALL_FUNC</code>）不同，内置函数的 ID 是硬编码的。语句级调用（返回值未被接收）会自动插入 <code>POP</code>（0x43）指令清除栈顶。</p>
+                                </div>
+                            </article>
 
-<ul class="doc-list">
-<li><b>常量池（<code>constPool</code>）：</b>存储程序运行期所需的字符串、整数、浮点常量。</li>
-<li><b>操作数栈（<code>stack</code>）：</b>基于 <code>vector</code> 的栈，用于表达式求值与参数传递。栈下溢会抛错。</li>
-<li><b>全局变量区（<code>globals</code>）：</b>动态扩容的槽位数组。</li>
-<li><b>函数表（<code>funcs</code>）：</b>启动时经预扫描建立，记录每个函数的参数数、局部变量数、入口地址与代码大小。</li>
-<li><b>调用栈（<code>callStack</code>）：</b>由 <code>CallFrame</code> 组成的向量，每个帧保存函数 ID、返回地址与局部变量区，实现递归。</li>
-</ul>
+                            <!-- 字节码文件格式 -->
+                            <article class="doc-section" id="doc-format">
+                                <h1>字节码文件格式</h1>
+                                <p>Ae 字节码文件（<code>.aeo</code>）采用二进制格式，大端字节序编码，整体结构分为文件头、常量池和代码段三部分。</p>
 
-<h3>值表示</h3>
-<p>运行时值 <code>Value</code> 通过 <code>ValueKind</code> 标签区分类型，整数与浮点共用一个联合体（<code>i</code>/<code>f</code>），字符串以 <code>shared_ptr&lt;string&gt;</code> 引用计数管理：</p>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">运行时值</span></div>
-<div class="code-body">
-<pre><code><span class="kw">enum</span> <span class="type">ValueKind</span> { <span class="type">VAL_INT</span>, <span class="type">VAL_DOUBLE</span>, <span class="type">VAL_STR</span>, <span class="type">VAL_BOOL</span> }
-<span class="kw">struct</span> <span class="type">Value</span> {
-    <span class="type">ValueKind</span> kind
-    <span class="kw">union</span> { <span class="type">int64_t</span> i; <span class="type">double</span> f }
-    <span class="builtin">shared_ptr</span>&lt;<span class="type">string</span>&gt; str
-}</code></pre>
-</div>
-</div>
+                                <h2>文件头</h2>
+                                <p>文件头固定 16 字节，结构如下：</p>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>偏移</th><th>大小</th><th>字段</th><th>说明</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>0</td><td>4</td><td>magic</td><td>魔数 <code>"AeBc"</code>（0x41 65 42 63）</td></tr>
+                                        <tr><td>4</td><td>1</td><td>major</td><td>主版本号（当前 1）</td></tr>
+                                        <tr><td>5</td><td>1</td><td>minor</td><td>次版本号（当前 0）</td></tr>
+                                        <tr><td>6</td><td>2</td><td>flags</td><td>标志位（当前保留为 0）</td></tr>
+                                        <tr><td>8</td><td>4</td><td>constPoolCount</td><td>常量池条目数（u32，大端）</td></tr>
+                                        <tr><td>12</td><td>4</td><td>codeLength</td><td>代码段字节数（u32，大端）</td></tr>
+                                    </tbody>
+                                </table>
 
-<h3>函数调用与递归</h3>
-<p>调用用户函数时，虚拟机：① 从操作数栈按逆序弹出实参；② 创建新的 <code>CallFrame</code>，将参数填入局部变量区前部；③ 压入调用栈，记录返回地址；④ 跳转至函数入口。遇 <code>RET</code> 指令时弹出帧、恢复返回地址。若调用栈为空时执行 <code>RET</code>（顶层返回），其行为等同于 <code>HALT</code>。</p>
+                                <h2>整体布局</h2>
+                                <div class="doc-diagram">
+                                    <div class="doc-diagram-row"><span class="doc-diagram-label">文件头</span><span class="doc-diagram-bar bar-header">16 字节</span></div>
+                                    <div class="doc-diagram-row"><span class="doc-diagram-label">常量池</span><span class="doc-diagram-bar bar-pool">constPoolCount 条目</span></div>
+                                    <div class="doc-diagram-row"><span class="doc-diagram-label">代码段</span><span class="doc-diagram-bar bar-code">codeLength 字节</span></div>
+                                </div>
+                            </article>
 
-<h3>启动流程</h3>
-<ol class="doc-list">
-<li><code>load()</code>：校验魔数、读取头、填充常量池与字节码。</li>
-<li><code>run()</code>：调用 <code>preScanFunctions()</code> 建立函数表。</li>
-<li>从 <code>pc = 0</code> 开始逐条取指、执行，直至 <code>HALT</code> 或顶层 <code>RET</code>。</li>
-</ol>
-</section>
+                            <!-- 常量池 -->
+                            <article class="doc-section" id="doc-constants">
+                                <h1>常量池</h1>
+                                <p>常量池存储编译期确定的字面量（字符串、整数、浮点数），代码段通过索引引用池中的条目。常量池在文件中紧随文件头之后。</p>
 
-<!-- 工具链 -->
-<section id="toolchain" class="doc-section">
-<h2>工具链</h2>
-<p>Ae 提供三个独立的可执行程序，全部以单文件 C++ 实现，仅需标准库即可编译。</p>
+                                <h2>条目格式</h2>
+                                <p>每个常量池条目由三部分组成：</p>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>偏移</th><th>大小</th><th>字段</th><th>说明</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>0</td><td>1</td><td>tag</td><td>类型标签</td></tr>
+                                        <tr><td>1</td><td>4</td><td>length</td><td>数据长度（u32，大端）</td></tr>
+                                        <tr><td>5</td><td>length</td><td>data</td><td>实际数据</td></tr>
+                                    </tbody>
+                                </table>
 
-<table class="doc-table">
-<thead><tr><th>程序</th><th>源文件</th><th>作用</th><th>用法</th></tr></thead>
-<tbody>
-<tr>
-<td><code>ae</code></td><td><code>ae.cpp</code></td>
-<td>虚拟机（执行器）</td>
-<td><code>ae program.aeo</code></td>
-</tr>
-<tr>
-<td><code>aec</code></td><td><code>aec.cpp</code></td>
-<td>编译器</td>
-<td><code>aec input.ae [output.aeo]</code></td>
-</tr>
-<tr>
-<td><code>aed</code></td><td><code>aed.cpp</code></td>
-<td>反汇编器</td>
-<td><code>aed program.aeo</code></td>
-</tr>
-</tbody>
-</table>
+                                <h2>类型标签</h2>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>Tag 值</th><th>常量类型</th><th>数据编码</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td><code>0x01</code></td><td>UTF-8 字符串</td><td>原始 UTF-8 字节序列</td></tr>
+                                        <tr><td><code>0x02</code></td><td>32 位整数</td><td>int32 补码（大端）</td></tr>
+                                        <tr><td><code>0x03</code></td><td>64 位浮点数</td><td>double IEEE 754（大端）</td></tr>
+                                    </tbody>
+                                </table>
 
-<h3>编译器（aec）</h3>
-<p>编译流程为<strong>单趟递归下降分析 + 两遍代码生成</strong>：第一遍解析顶层并收集函数定义（同时编译函数体到独立缓冲区，最终追加到输出末尾），第二遍回填跳转偏移。<code>break</code>/<code>continue</code> 的跳转地址在循环结束时统一回填。</p>
+                                <h2>去重机制</h2>
+                                <p>编译器在添加常量时执行去重：相同值的常量只存储一次，后续引用复用同一索引。这有效减少了字节码文件的体积。</p>
 
-<h3>反汇编器（aed）</h3>
-<p>读取 <code>.aeo</code> 文件，按字节码规范解析文件头、常量池与指令流，输出带地址、助记符与操作数的可读文本，用于调试与教学。支持 <code>//</code> 风格注释回显。</p>
+                                <div class="doc-callout">
+                                    <strong>字节序说明</strong>
+                                    <p>Ae 字节码统一使用<strong>大端（Big-Endian）</strong>编码，包括文件头中的 u16/u32 字段、常量池长度、以及所有指令操作数。这意味着同一份 <code>.aeo</code> 文件可在不同架构的处理器上正确执行。</p>
+                                </div>
+                            </article>
 
-<h3>编译（示例，Linux / WSL）</h3>
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">构建</span></div>
-<div class="code-body code-body-cmd">
-<pre><code><span class="prompt">$</span> g++ -O2 -std=c++17 ae.cpp  -o ae
-<span class="prompt">$</span> g++ -O2 -std=c++17 aec.cpp -o aec
-<span class="prompt">$</span> g++ -O2 -std=c++17 aed.cpp -o aed</code></pre>
-</div>
-</div>
-</section>
+                            <!-- 指令集参考 -->
+                            <article class="doc-section" id="doc-instructions">
+                                <h1>指令集参考</h1>
+                                <p>Ae 虚拟机定义了 44 条字节码指令，涵盖栈操作、算术运算、比较、控制流、变量访问和函数调用。所有多字节操作数均采用大端编码。</p>
 
-<!-- 错误处理 -->
-<section id="err" class="doc-section">
-<h2>错误处理</h2>
-<p>Ae 在编译期与运行期均以抛出异常（<code>runtime_error</code>）的方式报告错误，由 <code>main</code> 捕获后打印到标准错误并以非零状态退出。</p>
+                                <h2>完整指令表</h2>
+                                <table class="doc-table doc-table-wide">
+                                    <thead>
+                                        <tr><th>OpCode</th><th>助记符</th><th>操作数</th><th>语义</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td><code>0x00</code></td><td>NOP</td><td>—</td><td>无操作</td></tr>
+                                        <tr><td><code>0x01</code></td><td>LOAD_CONST</td><td>u16 idx</td><td>将常量池[idx] 压入操作数栈</td></tr>
+                                        <tr><td><code>0x02</code></td><td>CALL</td><td>u8 funcId, u8 argc</td><td>调用内置函数</td></tr>
+                                        <tr><td><code>0x03</code></td><td>HALT</td><td>—</td><td>停机</td></tr>
+                                        <tr><td><code>0x04</code></td><td>STORE</td><td>u16 slot</td><td>栈顶 → 全局变量[slot]</td></tr>
+                                        <tr><td><code>0x05</code></td><td>LOAD_VAR</td><td>u16 slot</td><td>全局变量[slot] → 栈顶</td></tr>
+                                        <tr><td><code>0x06</code></td><td>IADD</td><td>—</td><td>弹出 b, a；压入 a + b（int）</td></tr>
+                                        <tr><td><code>0x07</code></td><td>ISUB</td><td>—</td><td>弹出 b, a；压入 a - b（int）</td></tr>
+                                        <tr><td><code>0x08</code></td><td>IMUL</td><td>—</td><td>弹出 b, a；压入 a × b（int）</td></tr>
+                                        <tr><td><code>0x09</code></td><td>IDIV</td><td>—</td><td>弹出 b, a；压入 a / b（int）</td></tr>
+                                        <tr><td><code>0x0A</code></td><td>FADD</td><td>—</td><td>浮点加法</td></tr>
+                                        <tr><td><code>0x0B</code></td><td>FSUB</td><td>—</td><td>浮点减法</td></tr>
+                                        <tr><td><code>0x0C</code></td><td>FMUL</td><td>—</td><td>浮点乘法</td></tr>
+                                        <tr><td><code>0x0D</code></td><td>FDIV</td><td>—</td><td>浮点除法</td></tr>
+                                        <tr><td><code>0x0E</code></td><td>ITOD</td><td>—</td><td>栈顶 int64 → double</td></tr>
+                                        <tr><td><code>0x0F</code></td><td>IMOD</td><td>—</td><td>弹出 b, a；压入 a % b（int）</td></tr>
+                                        <tr><td><code>0x10</code></td><td>IEQ</td><td>—</td><td>(a == b) → bool（int）</td></tr>
+                                        <tr><td><code>0x11</code></td><td>INEQ</td><td>—</td><td>(a != b) → bool（int）</td></tr>
+                                        <tr><td><code>0x12</code></td><td>ILT</td><td>—</td><td>(a &lt; b) → bool（int）</td></tr>
+                                        <tr><td><code>0x13</code></td><td>ILE</td><td>—</td><td>(a &lt;= b) → bool（int）</td></tr>
+                                        <tr><td><code>0x14</code></td><td>IGT</td><td>—</td><td>(a &gt; b) → bool（int）</td></tr>
+                                        <tr><td><code>0x15</code></td><td>IGE</td><td>—</td><td>(a &gt;= b) → bool（int）</td></tr>
+                                        <tr><td><code>0x16</code></td><td>FCMP_EQ</td><td>—</td><td>浮点 ==</td></tr>
+                                        <tr><td><code>0x17</code></td><td>FCMP_NE</td><td>—</td><td>浮点 !=</td></tr>
+                                        <tr><td><code>0x18</code></td><td>FCMP_LT</td><td>—</td><td>浮点 &lt;</td></tr>
+                                        <tr><td><code>0x19</code></td><td>FCMP_LE</td><td>—</td><td>浮点 &lt;=</td></tr>
+                                        <tr><td><code>0x1A</code></td><td>FCMP_GT</td><td>—</td><td>浮点 &gt;</td></tr>
+                                        <tr><td><code>0x1B</code></td><td>FCMP_GE</td><td>—</td><td>浮点 &gt;=</td></tr>
+                                        <tr><td><code>0x2A</code></td><td>JZ</td><td>u16 offset</td><td>栈顶为假时，PC += offset（有符号）</td></tr>
+                                        <tr><td><code>0x2B</code></td><td>JMP</td><td>u16 offset</td><td>无条件跳转，PC += offset（有符号）</td></tr>
+                                        <tr><td><code>0x30</code></td><td>LOCAL_STORE</td><td>u16 slot</td><td>栈顶 → 当前帧局部变量[slot]</td></tr>
+                                        <tr><td><code>0x31</code></td><td>LOCAL_LOAD</td><td>u16 slot</td><td>当前帧局部变量[slot] → 栈顶</td></tr>
+                                        <tr><td><code>0x40</code></td><td>FUNC_DEF</td><td>u16 funcId, u16 paramCount, u16 localCount, u32 codeSize</td><td>函数定义头部</td></tr>
+                                        <tr><td><code>0x41</code></td><td>CALL_FUNC</td><td>u16 funcId, u8 argc</td><td>调用用户自定义函数</td></tr>
+                                        <tr><td><code>0x42</code></td><td>RET</td><td>—</td><td>从函数返回（顶层 RET 等同于 HALT）</td></tr>
+                                        <tr><td><code>0x43</code></td><td>POP</td><td>—</td><td>丢弃栈顶值</td></tr>
+                                    </tbody>
+                                </table>
 
-<h3>编译期错误</h3>
-<ul class="doc-list">
-<li>语法错误：如缺少括号、期望特定 Token 等，报"语法错误: 期望 …"。</li>
-<li>语义错误：未定义的函数、参数数量不匹配、<code>local</code>/<code>return</code> 在函数外使用、跳转跨度超出 int16 范围等。</li>
-</ul>
+                                <h2>跳转偏移编码</h2>
+                                <p><code>JZ</code>（0x2A）和 <code>JMP</code>（0x2B）的操作数为 16 位<strong>有符号</strong>偏移量（int16），表示相对于<strong>跳转指令之后</strong>的位置的偏移。因此最大跳转范围为 ±32767 字节。编译器在生成跳转时使用"占位 + 回填"策略：先写入 0x0000 占位，待跳转目标确定后重写实际偏移。</p>
 
-<h3>运行期错误</h3>
-<ul class="doc-list">
-<li>算术异常：整数 / 浮点除以零、取模除以零。</li>
-<li>栈异常：操作数栈下溢（如栈为空时取值）。</li>
-<li>作用域异常：在函数外使用 <code>LOCAL_STORE</code>/<code>LOCAL_LOAD</code>。</li>
-<li>调用异常：调用未定义的函数、<code>inp()</code> 遇 EOF。</li>
-<li>文件异常：无法打开文件、魔数不匹配、文件过短。</li>
-</ul>
+                                <div class="doc-callout doc-callout-warning">
+                                    <strong>跳转跨度限制</strong>
+                                    <p>由于跳转偏移为 16 位有符号整数，单个跳转的最大跨度为 32767 字节。如果循环体或条件分支的代码量超过此限制，编译器会报错"跳转跨度过大（超出 int16）"。</p>
+                                </div>
+                            </article>
 
-<div class="code-window code-window-sm">
-<div class="code-title"><span class="code-title-text">错误输出示例</span></div>
-<div class="code-body code-body-cmd">
-<pre><code><span class="output">✗ 运行错误: 整数除以零</span>
-<span class="output">✗ 编译错误: 未定义的函数: bar</span></code></pre>
-</div>
-</div>
-</section>
+                            <!-- 编译器 aec -->
+                            <article class="doc-section" id="doc-aec">
+                                <h1>编译器 (aec)</h1>
+                                <p><code>aec</code>（Ae Compiler）将 <code>.ae</code> 源代码编译为 <code>.aeo</code> 字节码文件。</p>
 
-<footer class="doc-footer">
-<hr class="doc-rule">
-<p class="muted small">Ae Language · Version 1.0 · 字节码版本 1.0（魔数 <code>AeBc</code>）</p>
-<p class="muted small">本文档基于 <code>ae.cpp</code>、<code>aec.cpp</code>、<code>aed.cpp</code> 源码自动分析生成，力求与实现一致。如发现偏差，欢迎提交反馈。</p>
-</footer>
+                                <h2>用法</h2>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre>aec &lt;输入文件&gt; [&lt;输出文件&gt;]</pre>
+                                    </div>
+                                </div>
 
-</div>
-</article>
-</div>
-</main>
+                                <p>若未指定输出文件，默认将输入文件的扩展名替换为 <code>.aeo</code>（如 <code>main.ae</code> → <code>main.aeo</code>）。若不提供任何参数，编译器会交互式提示输入文件路径。</p>
 
-<!-- ========== 下载页 ========== -->
-<main id="page-download" class="page hidden">
-<div class="container">
-<section class="section">
-<h1 class="page-h1">下载</h1>
-<p class="lead center">获取 Ae 运行时环境，一键运行你的 <code>.ae</code> 程序。</p>
+                                <h2>编译流程</h2>
+                                <ol class="doc-list">
+                                    <li><strong>词法分析（Lexer）</strong>：将源码字符流转换为 Token 流。支持 <code>//</code> 单行注释、双引号和单引号字符串、整数和浮点数、标识符及运算符。</li>
+                                    <li><strong>语法分析（Parser）</strong>：采用递归下降法，按运算符优先级构建表达式。顶层处理函数定义（<code>func</code>）、<code>main</code> 块和全局语句。</li>
+                                    <li><strong>代码生成</strong>：将 AST 转换为字节码指令序列。函数体独立缓冲，全局代码在前，函数定义在后。</li>
+                                    <li><strong>链接</strong>：将所有函数定义追加到全局代码之后，末尾自动添加 <code>HALT</code>（0x03）。</li>
+                                </ol>
 
-<div class="grid grid-3 download-grid">
-<!-- Windows -->
-<article class="download-card">
-<div class="dl-icon">🪟</div>
-<h3>Windows</h3>
-<p class="muted">适用于 Windows 10 / 11 的运行时环境包，含 <code>ae</code>、<code>aec</code>、<code>aed</code>。</p>
-<span class="dl-tag">64-bit · .zip</span>
-<button class="btn btn-primary dl-btn" disabled>即将发布</button>
-</article>
+                                <h2>函数定义布局</h2>
+                                <p>编译后，所有用户函数定义位于代码段的末尾（<code>HALT</code> 之前）。虚拟机启动时通过 <code>preScanFunctions()</code> 扫描所有 <code>FUNC_DEF</code>（0x40）指令建立函数表，因此函数可以在被调用之后才定义。</p>
 
-<!-- Android -->
-<article class="download-card">
-<div class="dl-icon">🤖</div>
-<h3>Android</h3>
-<p class="muted">适用于 Android 终端环境的运行时包，可在 Termux 等环境中直接使用。</p>
-<span class="dl-tag">arm64 · .tar.gz</span>
-<button class="btn btn-primary dl-btn" disabled>即将发布</button>
-</article>
+                                <h2>错误处理</h2>
+                                <p>编译器在语法分析阶段检测错误并输出描述性消息，例如：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="output">✗ 编译错误: 语法错误: 期望 "{", 得到 'main'</span>
+<span class="output">✗ 编译错误: 未定义的函数: foo</span>
+<span class="output">✗ 编译错误: 函数 'bar' 参数数量不匹配: 期望 2, 得到 1</span>
+<span class="output">✗ 编译错误: local 只能在函数内使用</span></pre>
+                                    </div>
+                                </div>
+                            </article>
 
-<!-- Linux -->
-<article class="download-card">
-<div class="dl-icon">🐧</div>
-<h3>Linux</h3>
-<p class="muted">适用于 x86_64 Linux 的运行时包，也可从源码自行编译。</p>
-<span class="dl-tag">64-bit · .tar.gz</span>
-<button class="btn btn-primary dl-btn" disabled>即将发布</button>
-</article>
-</div>
+                            <!-- 虚拟机 ae -->
+                            <article class="doc-section" id="doc-ae">
+                                <h1>虚拟机 (ae)</h1>
+                                <p><code>ae</code>（Ae VM）是 Ae 语言的运行时核心，负责加载字节码文件并解释执行。</p>
 
-<div class="tip">
-<b>从源码构建：</b>如果你使用的平台暂无预编译包，可以从源码编译——三个工具均为单文件 C++ 程序，用任意支持 C++17 的编译器即可：
-</div>
-<div class="code-window">
-<div class="code-title"><span class="code-title-text">构建全部工具</span></div>
-<div class="code-body code-body-cmd">
-<pre><code><span class="comment"># Linux / macOS / WSL / 任何 POSIX 环境</span>
-<span class="prompt">$</span> g++ -O2 -std=c++17 ae.cpp  -o ae
-<span class="prompt">$</span> g++ -O2 -std=c++17 aec.cpp -o aec
-<span class="prompt">$</span> g++ -O2 -std=c++17 aed.cpp -o aed
+                                <h2>用法</h2>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre>ae &lt;字节码文件&gt;</pre>
+                                    </div>
+                                </div>
 
-<span class="comment"># Windows (MinGW / MSYS2)</span>
-<span class="prompt">></span> g++ -O2 -std=c++17 ae.cpp  -o ae.exe
-<span class="prompt">></span> g++ -O2 -std=c++17 aec.cpp -o aec.exe
-<span class="prompt">></span> g++ -O2 -std=c++17 aed.cpp -o aed.exe</code></pre>
-</div>
-</div>
+                                <p>若不提供参数，虚拟机会交互式提示输入文件路径。支持引号包裹的路径（自动去除首尾引号）。</p>
 
-<p class="muted small center">预编译包发布后将通过本页面提供下载。环境包将包含虚拟机 <code>ae</code>、编译器 <code>aec</code>、反汇编器 <code>aed</code> 及标准库（待定）。</p>
-</section>
-</div>
-</main>
+                                <h2>运行时结构</h2>
+                                <table class="doc-table">
+                                    <thead>
+                                        <tr><th>组件</th><th>说明</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>操作数栈（Stack）</td><td>执行指令时临时存储值</td></tr>
+                                        <tr><td>全局变量（Globals）</td><td>全局变量槽数组，按需扩容</td></tr>
+                                        <tr><td>函数表（FuncDefs）</td><td>函数 ID → 函数元数据的映射</td></tr>
+                                        <tr><td>调用栈（CallStack）</td><td>调用帧（CallFrame）列表，支持递归</td></tr>
+                                        <tr><td>当前局部变量</td><td>指向当前帧的局部变量区的指针</td></tr>
+                                    </tbody>
+                                </table>
 
-<footer class="site-footer">
-<div class="container footer-inner">
-<span>© Ae Language · 一门字节码型编程语言</span>
-<a href="#/docs" onclick="navigate('/docs')">官方文档</a>
-</div>
-</footer>
+                                <h2>执行流程</h2>
+                                <ol class="doc-list">
+                                    <li>加载 <code>.aeo</code> 文件，验证魔数 <code>AeBc</code></li>
+                                    <li>解析文件头，读取常量池和代码段</li>
+                                    <li><code>preScanFunctions()</code>：扫描所有 <code>FUNC_DEF</code> 建立函数表</li>
+                                    <li>从 PC = 0 开始逐条执行指令，直至 <code>HALT</code></li>
+                                </ol>
 
-<script src="app.js"></script>
+                                <h2>值表示</h2>
+                                <p>运行时值采用<strong>类型化标签值（Tagged Value）</strong>模型：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="type">enum</span> ValueKind { VAL_INT=<span class="num">0</span>, VAL_DOUBLE=<span class="num">1</span>, VAL_STR=<span class="num">2</span>, VAL_BOOL=<span class="num">3</span> }
+
+<span class="type">struct</span> Value {
+    ValueKind kind
+    <span class="kw">union</span> { int64 i; double f }    <span class="comment">// 整数/浮点共用存储</span>
+    shared_ptr&lt;string&gt; str       <span class="comment">// 字符串使用引用计数</span>
+}</pre>
+                                    </div>
+                                </div>
+
+                                <div class="doc-callout doc-callout-warning">
+                                    <strong>运行时错误</strong>
+                                    <p>以下情况会导致虚拟机抛出异常：魔数不匹配、文件过短、栈下溢、除以零、调用未定义的函数、在函数外使用局部变量指令、遇到未知指令等。错误信息以 <code>✗ 运行错误:</code> 前缀输出。</p>
+                                </div>
+                            </article>
+
+                            <!-- 反汇编器 aed -->
+                            <article class="doc-section" id="doc-aed">
+                                <h1>反汇编器 (aed)</h1>
+                                <p><code>aed</code>（Ae Disassembler）将 <code>.aeo</code> 字节码文件反汇编为可读的汇编格式文本，便于调试和分析编译产物。</p>
+
+                                <h2>用法</h2>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre>aed &lt;字节码文件&gt;</pre>
+                                    </div>
+                                </div>
+
+                                <p>若不提供参数，反汇编器会交互式提示输入文件路径。</p>
+
+                                <h2>输出格式</h2>
+                                <p>输出分为三个部分：文件头信息、常量池和代码段。</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre><span class="comment">; ╔══════════════════════════════════════════════════════════╗</span>
+<span class="comment">; ║  Ae Bytecode Disassembly  (example.aeo)</span>
+<span class="comment">; ╠══════════════════════════════════════════════════════════╣</span>
+<span class="comment">; ║  Magic: AeBc  Version: 1.0</span>
+<span class="comment">; ╚══════════════════════════════════════════════════════════╝</span>
+<span class="comment">;</span>
+<span class="comment">; ── Constant Pool (5 entries) ───────────────</span>
+  #  0  utf8   <span class="str">"Hello"</span>
+  #  1  int32  <span class="num">42</span>
+  #  2  double <span class="num">3.14</span>
+<span class="comment">; ── Code (68 bytes) ────────────────────────────</span>
+    0: LOAD_CONST  #0
+    3: STORE      slot@0
+    6: LOAD_VAR   slot@0</pre>
+                                    </div>
+                                </div>
+
+                                <h2>代码段格式</h2>
+                                <p>每行格式为：</p>
+                                <div class="code-window code-window-inline">
+                                    <div class="code-body">
+<pre>  &lt;偏移&gt;: &lt;助记符&gt;  [&lt;操作数&gt;]  [; &lt;注释&gt;]</pre>
+                                    </div>
+                                </div>
+
+                                <p>其中偏移是相对于代码段起始的字节偏移。内置函数调用显示函数名（如 <code>CALL pr argc=1</code>），函数调用显示 <code>fid</code>。</p>
+
+                                <div class="doc-callout">
+                                    <strong>使用场景</strong>
+                                    <p>反汇编器主要用于：验证编译器生成的字节码是否正确、调试运行时行为、学习字节码格式、分析程序性能瓶颈（指令数量）。</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span class="logo-symbol">{Ae}</span>
+                    <span class="footer-copy">© 2026 Ae Language. 基于字节码的栈式虚拟机语言。</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#download" data-page="download">下载</a>
+                    <a href="#docs" data-page="docs">文档</a>
+                    <a href="https://github.com/aelang" target="_blank" rel="noopener">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
 </body>
 </html>
