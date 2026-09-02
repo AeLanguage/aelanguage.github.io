@@ -1,106 +1,121 @@
-/* ============================================================
+/* =========================================================================
    Ae Language — 前端逻辑
-   - 单页路由（hash-based）
-   - 移动端导航
-   - 滚动效果
-   ============================================================ */
+   功能：哈希路由（首页 / 文档 / 下载）、移动端汉堡菜单、滚动高亮侧边栏
+   ========================================================================= */
 
 (function () {
     'use strict';
 
-    /* ---------- 路由 ---------- */
-    const pages = ['home', 'download', 'docs'];
+    // ---------- 页面路由表 ----------
+    const PAGES = {
+        '/':       'page-home',
+        '/docs':   'page-docs',
+        '/download': 'page-download',
+    };
 
-    function showPage(pageId) {
-        // 隐藏所有页面
-        pages.forEach(function (id) {
-            const el = document.getElementById('page-' + id);
-            if (el) el.style.display = 'none';
+    const navItems = document.querySelectorAll('.nav-links a[data-page]');
+    const sideLinks = document.querySelectorAll('.side-link');
+
+    // 根据 hash 渲染对应页面
+    function render() {
+        const raw = location.hash.replace(/^#/, '') || '/';
+        // 去掉 #anchor 部分，只取路径
+        const path = raw.split('#')[0] || '/';
+        const targetId = PAGES[path] || 'page-home';
+
+        // 显示 / 隐藏页面
+        Object.values(PAGES).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden', id !== targetId);
         });
 
-        // 显示目标页面
-        const target = document.getElementById('page-' + pageId);
-        if (target) target.style.display = 'block';
+        // 顶部导航高亮
+        navItems.forEach(a => a.classList.toggle('active', a.dataset.page === pageKey(path)));
 
-        // 更新导航高亮
-        document.querySelectorAll('.nav-link').forEach(function (link) {
-            link.classList.toggle('active', link.dataset.page === pageId);
-        });
-
-        // 滚动到顶部
-        window.scrollTo(0, 0);
-
-        // 更新 URL hash（不触发滚动）
-        const hash = pageId === 'home' ? '' : pageId;
-        history.replaceState(null, '', hash ? '#' + hash : window.location.pathname);
-    }
-
-    function getPageFromHash() {
-        const hash = window.location.hash.replace('#', '');
-        return pages.includes(hash) ? hash : 'home';
-    }
-
-    // 拦截所有内链点击
-    document.addEventListener('click', function (e) {
-        const link = e.target.closest('[data-page]');
-        if (!link) return;
-
-        // 只处理同站链接
-        const href = link.getAttribute('href');
-        if (href && href.startsWith('#')) {
-            e.preventDefault();
-            const page = link.dataset.page;
-            showPage(page);
-
-            // 关闭移动端菜单
-            const navLinks = document.getElementById('navLinks');
-            if (navLinks) navLinks.classList.remove('open');
+        // 滚动到锚点（文档页内跳转）
+        const hashPart = location.hash.includes('#') ? location.hash.split('#').pop() : '';
+        if (hashPart && path === '/docs') {
+            // 等待页面渲染后跳转
+            requestAnimationFrame(() => {
+                const el = document.getElementById(hashPart);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
         }
-    });
 
-    // 浏览器前进后退
-    window.addEventListener('hashchange', function () {
-        showPage(getPageFromHash());
-    });
+        // 回到顶部（页面切换时）
+        if (!hashPart) window.scrollTo(0, 0);
+    }
 
-    /* ---------- 移动端导航 ---------- */
-    const navToggle = document.getElementById('navToggle');
+    function pageKey(path) {
+        if (path === '/' || path === '') return 'home';
+        if (path.startsWith('/docs')) return 'docs';
+        if (path.startsWith('/download')) return 'download';
+        return 'home';
+    }
+
+    // 供 onclick 调用：更新 hash 并渲染
+    window.navigate = function (path) {
+        if (location.hash !== '#' + path) {
+            location.hash = '#' + path;
+        } else {
+            render();
+        }
+        closeMenu();
+    };
+
+    // 供侧边栏链接：先导航、再滚动
+    window.scrollToHash = function (id) {
+        requestAnimationFrame(() => {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    };
+
+    // ---------- 哈希变化监听 ----------
+    window.addEventListener('hashchange', render);
+
+    // ---------- 移动端汉堡菜单 ----------
+    const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
 
-    if (navToggle && navLinks) {
-        navToggle.addEventListener('click', function () {
+    function closeMenu() { navLinks.classList.remove('open'); }
+
+    if (hamburger) {
+        hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('open');
         });
+    }
 
-        // 点击外部关闭
-        document.addEventListener('click', function (e) {
-            if (!e.target.closest('.navbar')) {
-                navLinks.classList.remove('open');
-            }
+    // ---------- 文档侧边栏：滚动时高亮当前章节 ----------
+    function setupScrollSpy() {
+        const sections = document.querySelectorAll('.doc-section');
+        if (!sections.length) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    sideLinks.forEach(link => {
+                        const active = link.getAttribute('href').endsWith('#' + id);
+                        link.classList.toggle('active', active);
+                    });
+                }
+            });
+        }, {
+            // 顶部偏移导航高度，提前触发
+            rootMargin: '-80px 0px -65% 0px',
+            threshold: 0,
         });
+
+        sections.forEach(s => observer.observe(s));
     }
 
-    /* ---------- 导航栏滚动阴影 ---------- */
-    const navbar = document.getElementById('navbar');
-    let ticking = false;
-
-    function updateNavbar() {
-        if (window.scrollY > 10) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-        ticking = false;
+    // ---------- 初始化 ----------
+    function init() {
+        if (!location.hash) location.hash = '#/';
+        render();
+        setupScrollSpy();
     }
 
-    window.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(updateNavbar);
-            ticking = true;
-        }
-    });
-
-    /* ---------- 初始化 ---------- */
-    showPage(getPageFromHash());
-
+    init();
 })();
