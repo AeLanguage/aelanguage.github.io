@@ -401,21 +401,59 @@ img.logo-symbol {
 /* 语法高亮 —— 对接 Ae 主题 (Monet Pink)
    scope 映射: keyword / funcDef / funcName / funcCall / builtin /
    type / bool / number / string / comment / operator / param / localVar */
+.quick-code .kw,
+.quick-code .kw,
 .code-body .kw      { color: #A33B5C; font-weight: 600; }    /* keyword          */
+.quick-code .funcDef,
+.quick-code .funcDef,
 .code-body .funcDef { color: #8C2F52; font-weight: 600; }    /* funcDef          */
+.quick-code .funcName,
+.quick-code .funcName,
 .code-body .funcName{ color: #C75B7A; font-weight: 700; }    /* funcName (定义名) */
+.quick-code .funcCall,
+.quick-code .funcCall,
 .code-body .funcCall { color: #D66A92; }                      /* funcCall (调用)   */
+.quick-code .builtin,
+.quick-code .builtin,
 .code-body .builtin { color: #B04A70; }                      /* builtin (pr/prln/inp) */
+.quick-code .type,
+.quick-code .type,
 .code-body .type    { color: #7B4B8A; font-weight: 600; }    /* type             */
+.quick-code .bool,
+.quick-code .bool,
 .code-body .bool    { color: #B23B5E; font-weight: 600; }    /* bool             */
+.quick-code .num,
+.quick-code .num,
 .code-body .num     { color: #C96B3E; }                      /* number           */
+.quick-code .str,
+.quick-code .str,
 .code-body .str     { color: #8B5B7A; }                      /* string           */
+.quick-code .comment,
+.quick-code .comment,
 .code-body .comment { color: #9A8A8A; font-style: italic; }   /* comment          */
+.quick-code .op,
+.quick-code .op,
 .code-body .op      { color: #6B4B7A; }                      /* operator         */
+.quick-code .param,
+.quick-code .param,
 .code-body .param   { color: #A85C78; }                      /* param            */
+.quick-code .localVar,
+.quick-code .localVar,
 .code-body .localVar{ color: #7C5B8A; }                      /* localVar         */
+.quick-code .prompt,
+.quick-code .prompt,
 .code-body .prompt  { color: var(--accent); }
+.quick-code .output,
 .code-body .output  { color: #8B7B7A; }
+/* 终端/报错输出专用：错误行、暗色说明、出错位置高亮 */
+.quick-code .errMark,
+.code-body .errMark { color: #C0392B; font-weight: 600; }
+.quick-code .dim,
+.code-body .dim     { color: #8A8A8A; }
+.quick-code .hlErr,
+.code-body .hlErr   { color: #C0392B; font-weight: 700; text-decoration: underline; }
+.quick-code .okMark,
+.code-body .okMark  { color: #2E8B57; font-weight: 600; }
 
 /* ---------- Features ---------- */
 .features-section { background: var(--bg); }
@@ -852,6 +890,14 @@ img.logo-symbol {
     line-height: 1.8 !important;
 }
 
+/* 文档正文里的跨章节链接（#doc-…）：三个分区之间互相引用要用，配 app.js 里的点击处理 */
+.doc-section a[href^="#doc-"] {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.doc-section a[href^="#doc-"]:hover { color: var(--primary); }
+
 .doc-section code {
     font-family: var(--font-mono);
     font-size: 0.88em;
@@ -1264,20 +1310,42 @@ img.logo-symbol {
     .code-header { background: #2A2428; border-bottom-color: #3D3540; }
 
     /* 暗色模式下的语法高亮（提亮版 Monet Pink） */
+    .quick-code .kw,
     .code-body .kw      { color: #E58AA8; }
+    .quick-code .funcDef,
     .code-body .funcDef { color: #F0A0BC; }
+    .quick-code .funcName,
     .code-body .funcName{ color: #F4A7B9; }
+    .quick-code .funcCall,
     .code-body .funcCall { color: #F7A8C4; }
+    .quick-code .builtin,
     .code-body .builtin { color: #FF9BB5; }
+    .quick-code .type,
     .code-body .type    { color: #D8BFD8; }
+    .quick-code .bool,
     .code-body .bool    { color: #FF9BB5; }
+    .quick-code .num,
     .code-body .num     { color: #FFB07C; }
+    .quick-code .str,
     .code-body .str     { color: #E6A8D7; }
+    .quick-code .comment,
     .code-body .comment { color: #9A8A89; }
+    .quick-code .op,
     .code-body .op      { color: #C9A0DC; }
+    .quick-code .param,
     .code-body .param   { color: #E8B4CC; }
+    .quick-code .localVar,
     .code-body .localVar{ color: #CBA6DB; }
+    .quick-code .output,
     .code-body .output  { color: #9A8A89; }
+    .quick-code .errMark,
+    .code-body .errMark { color: #FF8A80; }
+    .quick-code .dim,
+    .code-body .dim     { color: #8A8A89; }
+    .quick-code .hlErr,
+    .code-body .hlErr   { color: #FF8A80; }
+    .quick-code .okMark,
+    .code-body .okMark  { color: #7BC47F; }
 
     .code-window,
     .feature-card,

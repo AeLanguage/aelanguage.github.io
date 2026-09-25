@@ -13,6 +13,7 @@
     const pages = ['home', 'download', 'docs'];
 
     function showPage(pageId) {
+        const wanted = window.location.hash;      // ★ 先记下来：下面 replaceState 会改掉它
         // 隐藏所有页面
         pages.forEach(function (id) {
             const el = document.getElementById('page-' + id);
@@ -34,12 +35,39 @@
         // 更新 URL hash（不触发滚动）
         const hash = pageId === 'home' ? '' : pageId;
         history.replaceState(null, '', hash ? '#' + hash : window.location.pathname);
+
+        // ★ 深链接：进来时 hash 是 #doc-xxx，就滚到那一章
+        if (pageId === 'docs' && wanted.indexOf('#doc-') === 0)
+            scrollToDoc(wanted.slice(1));
     }
 
     function getPageFromHash() {
         const hash = window.location.hash.replace('#', '');
+        // ★ 直接打开 #doc-xxx（某一章）时也应该落在文档页，而不是回到首页
+        if (hash.indexOf('doc-') === 0) return 'docs';
         return pages.includes(hash) ? hash : 'home';
     }
+
+    // 跳到文档里的某一章（补偿导航栏高度）
+    function scrollToDoc(id) {
+        const target = document.getElementById(id);
+        if (!target) return false;
+        const top = target.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: top, behavior: 'auto' });
+        return true;
+    }
+
+    // 文档正文里的跨章节链接（#doc-…）：就地平滑滚动，不切页面、不改 hash
+    document.addEventListener('click', function (e) {
+        const a = e.target.closest('.docs-content a[href^="#doc-"]');
+        if (!a) return;
+        const id = a.getAttribute('href').slice(1);
+        // ★ 目标章节还不存在（比如正在补写）时也不能让它跳回首页：拦下点击，什么都不做
+        e.preventDefault();
+        if (!document.getElementById(id)) return;
+        scrollToDoc(id);
+        history.replaceState(null, '', '#docs');
+    });
 
     // 拦截所有内链点击
     document.addEventListener('click', function (e) {
