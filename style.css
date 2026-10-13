@@ -402,45 +402,31 @@ img.logo-symbol {
    scope 映射: keyword / funcDef / funcName / funcCall / builtin /
    type / bool / number / string / comment / operator / param / localVar */
 .quick-code .kw,
-.quick-code .kw,
 .code-body .kw      { color: #A33B5C; font-weight: 600; }    /* keyword          */
-.quick-code .funcDef,
 .quick-code .funcDef,
 .code-body .funcDef { color: #8C2F52; font-weight: 600; }    /* funcDef          */
 .quick-code .funcName,
-.quick-code .funcName,
 .code-body .funcName{ color: #C75B7A; font-weight: 700; }    /* funcName (定义名) */
-.quick-code .funcCall,
 .quick-code .funcCall,
 .code-body .funcCall { color: #D66A92; }                      /* funcCall (调用)   */
 .quick-code .builtin,
-.quick-code .builtin,
 .code-body .builtin { color: #B04A70; }                      /* builtin (pr/prln/inp) */
-.quick-code .type,
 .quick-code .type,
 .code-body .type    { color: #7B4B8A; font-weight: 600; }    /* type             */
 .quick-code .bool,
-.quick-code .bool,
 .code-body .bool    { color: #B23B5E; font-weight: 600; }    /* bool             */
-.quick-code .num,
 .quick-code .num,
 .code-body .num     { color: #C96B3E; }                      /* number           */
 .quick-code .str,
-.quick-code .str,
 .code-body .str     { color: #8B5B7A; }                      /* string           */
-.quick-code .comment,
 .quick-code .comment,
 .code-body .comment { color: #9A8A8A; font-style: italic; }   /* comment          */
 .quick-code .op,
-.quick-code .op,
 .code-body .op      { color: #6B4B7A; }                      /* operator         */
-.quick-code .param,
 .quick-code .param,
 .code-body .param   { color: #A85C78; }                      /* param            */
 .quick-code .localVar,
-.quick-code .localVar,
 .code-body .localVar{ color: #7C5B8A; }                      /* localVar         */
-.quick-code .prompt,
 .quick-code .prompt,
 .code-body .prompt  { color: var(--accent); }
 .quick-code .output,

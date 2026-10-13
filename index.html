@@ -14,7 +14,7 @@
     <meta name="msapplication-TileImage" content="/AeLogo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Ae 编程语言 - 基于字节码的栈式虚拟机语言，支持闭包、表、模块、异常与标准库（文件/JSON/命令行/图形界面）">
+    <meta name="description" content="Ae 编程语言 - 基于字节码的栈式虚拟机语言，支持闭包、表、模块、异常与 AOT 编译，标准库覆盖文件/JSON/命令行/数学">
     <title>Ae 编程语言 | Ae Language</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -49,7 +49,7 @@
                     <div class="hero-content">
                         <div class="hero-badge">
                             <span class="badge-dot"></span>
-                            AeBc 1.7 · 字节码虚拟机语言
+                            AeBc 1.8 · 字节码 + AOT 双后端
                         </div>
                         <h1 class="hero-title">
                             一门小而完整的<br>
@@ -57,8 +57,8 @@
                         </h1>
                         <p class="hero-desc">
                             Ae 是一种静态作用域的栈式虚拟机语言，源码经编译器生成紧凑的 <code class="inline-code">.aeo</code> 字节码，<br class="hide-mobile">
-                            由虚拟机解释执行。支持自定义函数、局部变量、递归调用与自动类型提升，<br class="hide-mobile">
-                            全部工具链以约 2000 行 C++ 实现，零第三方依赖。
+                            由虚拟机解释执行；也可以直接转译成 C++ 源码，再编译成独立的可执行文件。<br class="hide-mobile">
+                            闭包、模块、异常、切片与推导一应俱全，零第三方依赖。
                         </p>
                         <div class="hero-actions">
                             <a href="#download" class="btn btn-primary" data-page="download">
@@ -71,16 +71,16 @@
                         </div>
                         <div class="hero-meta">
                             <div class="meta-item">
-                                <span class="meta-num">4</span>
+                                <span class="meta-num">6</span>
                                 <span class="meta-label">内置类型</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-num">44</span>
-                                <span class="meta-label">字节码指令</span>
+                                <span class="meta-num">20</span>
+                                <span class="meta-label">关键字</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-num">3</span>
-                                <span class="meta-label">工具链组件</span>
+                                <span class="meta-num">38</span>
+                                <span class="meta-label">内置函数</span>
                             </div>
                         </div>
                     </div>
@@ -151,8 +151,8 @@
                             <div class="feature-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                             </div>
-                            <h3>自定义函数</h3>
-                            <p>支持自定义函数定义、参数传递、局部变量隔离，以及<strong>递归调用</strong>（含独立调用帧与返回地址管理）。</p>
+                            <h3>AOT 编译</h3>
+                            <p>除了字节码，还能把 <code>.ae</code> <strong>转译成 C++</strong> 并编译成独立的可执行文件；编译器可链进 <code>aec</code> 本体，无需外部工具链。</p>
                         </div>
                         <div class="feature-card">
                             <div class="feature-icon">
@@ -184,8 +184,8 @@
                             <div class="arch-num">01</div>
                             <div class="arch-info">
                                 <h3>aec <span class="arch-name">编译器</span></h3>
-                                <p>词法分析 → 递归下降语法分析 → 代码生成 → 链接</p>
-                                <code>.ae → .aeo</code>
+                                <p>词法 → 语法 → AST → 字节码发射（或转译 C++）</p>
+                                <code>.ae → .aeo ／ .cpp</code>
                             </div>
                         </div>
                         <div class="arch-arrow">
@@ -293,7 +293,7 @@
                             <h3>Windows</h3>
                             <p class="dl-desc">适用于 Windows 10 / 11 的预编译环境包</p>
                             <div class="dl-meta">
-                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-version">v2.1.0</span>
                                 <span class="dl-size">~2.4 MB</span>
                             </div>
                             <button class="btn btn-primary dl-btn" disabled>
@@ -311,7 +311,7 @@
                             <h3>Android</h3>
                             <p class="dl-desc">适用于 Android 终端环境的工具链</p>
                             <div class="dl-meta">
-                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-version">v2.1.0</span>
                                 <span class="dl-size">~1.8 MB</span>
                             </div>
                             <button class="btn btn-primary dl-btn" disabled>
@@ -329,7 +329,7 @@
                             <h3>Linux</h3>
                             <p class="dl-desc">适用于 x86_64 Linux 的预编译二进制</p>
                             <div class="dl-meta">
-                                <span class="dl-version">v1.0.0</span>
+                                <span class="dl-version">v2.1.0</span>
                                 <span class="dl-size">~2.1 MB</span>
                             </div>
                             <button class="btn btn-primary dl-btn" disabled>
@@ -344,7 +344,7 @@
                     <div class="source-box">
                         <div class="source-info">
                             <h3>从源码构建</h3>
-                            <p>Ae 的整个工具链仅依赖标准 C++ 库（<strong>C++17</strong> 及以上），无需任何第三方依赖。克隆仓库后，使用以下命令编译三个工具：</p>
+                            <p>Ae 的整个工具链仅依赖标准 C++ 库（<strong>C++17</strong> 及以上），无需任何第三方依赖。克隆仓库后，使用以下命令编译三个工具。若希望 <code>aec --aot-exe</code> 在进程内直接编出可执行文件，可额外安装 LLVM/Clang 套件后重新构建。</p>
                         </div>
                         <div class="source-code">
 <pre><span class="comment"># 克隆仓库</span>
@@ -354,7 +354,7 @@ git clone https://github.com/AeLanguage/Ae.git
 <span class="comment"># 编译三个工具（aec=编译器, ae=虚拟机, aed=反汇编器）</span>
 <span class="comment"># 源码在 Apt/ 目录下；需要 C++17</span>
 g++ -std=c++17 -O2 Apt/aec.cpp -o aec
-g++ -std=c++17 -O2 Apt/ae.cpp  -o ae
+g++ -std=c++17 -O2 Apt/ae.cpp Apt/ae_main.cpp -o ae
 g++ -std=c++17 -O2 Apt/aed.cpp -o aed
 
 <span class="comment"># 验证安装</span>
@@ -398,11 +398,8 @@ g++ -std=c++17 -O2 Apt/aed.cpp -o aed
                                     <a href="#doc-lib-path" class="docs-nav-link">path：路径处理</a>
                                     <a href="#doc-lib-json" class="docs-nav-link">json：JSON 读写</a>
                                     <a href="#doc-lib-args" class="docs-nav-link">args：命令行参数</a>
-                                    <a href="#doc-lib-ui-window" class="docs-nav-link">ui（一）窗口与消息循环</a>
-                                    <a href="#doc-lib-ui-shape" class="docs-nav-link">ui（二）图形与绘制</a>
-                                    <a href="#doc-lib-ui-text" class="docs-nav-link">ui（三）文字</a>
-                                    <a href="#doc-lib-ui-event" class="docs-nav-link">ui（四）事件与定时器</a>
-                                    <a href="#doc-lib-ui-prop" class="docs-nav-link">ui（五）属性总表</a>
+                                    <a href="#doc-lib-math" class="docs-nav-link">math：数学函数</a>
+                                    <a href="#doc-lib-aot" class="docs-nav-link">AOT：编译成可执行文件</a>
                                 </div>
                                 <div class="docs-nav-group">
                                     <h4>报错</h4>
@@ -443,7 +440,7 @@ g++ -std=c++17 -O2 Apt/aed.cpp -o aed
                                 <div class="code-window code-window-inline">
                                     <div class="code-body">
 <pre><span class="prompt">$</span> clang++ -std=c++17 -O2 -Wall ..\Apt\aec.cpp -o aec.exe
-<span class="prompt">$</span> clang++ -std=c++17 -O2 -Wall ..\Apt\ae.cpp  -o ae.exe
+<span class="prompt">$</span> clang++ -std=c++17 -O2 -Wall ..\Apt\ae.cpp ..\Apt\ae_main.cpp -o ae.exe
 <span class="prompt">$</span> clang++ -std=c++17 -O2 -Wall ..\Apt\aed.cpp -o aed.exe</pre>
                                     </div>
                                 </div>
@@ -540,7 +537,7 @@ g++ -std=c++17 -O2 Apt/aed.cpp -o aed
 <span class="output">; ╔══════════════════════════════════════════════════════╗
 ; ║  Ae Bytecode Disassembly  (hello.aeo)
 ; ╠══════════════════════════════════════════════════════════╣
-; ║  Magic: AeBc  Version: 1.7
+; ║  Magic: AeBc  Version: 1.8
 ; ╚══════════════════════════════════════════════════════════╝</span></pre>
                                     </div>
                                 </div>
@@ -976,7 +973,7 @@ n = n % <span class="num">3</span>  <span class="comment">// 1   取余要手写
                                 </div>
                                 <div class="doc-callout doc-callout-warning">
                                     <strong>具名函数不能直接当值传</strong>
-                                    <p>顶层写的 <code>func dbl(x) { … }</code> 只能<strong>被调用</strong>：把名字写进参数位置（<code>apply(dbl, 21)</code>、<code>ui.on(w, "click", 某函数)</code>）会报 <code>E1006 未声明的变量</code>。要用函数值，就先装进变量或表：<code>local dbl = func(x) { … }</code>、<code>local dbl = func name(x) { … }</code>（后者名字可用于递归），再传 <code>dbl</code>。写回调时习惯用 <code>func(e) { … }</code> 就不会碰到这个问题。</p>
+                                    <p>顶层写的 <code>func dbl(x) { … }</code> 只能<strong>被调用</strong>：把名字写进参数位置（<code>apply(dbl, 21)</code>）会报 <code>E1006 未声明的变量</code>。要用函数值，就先装进变量或表：<code>local dbl = func(x) { … }</code>、<code>local dbl = func name(x) { … }</code>（后者名字可用于递归），再传 <code>dbl</code>。写回调时习惯用 <code>func(e) { … }</code> 就不会碰到这个问题。</p>
                                 </div>
                                 <p><code>func(x) { … }</code> 是匿名函数（也叫 lambda / 闭包），它是 Ae 里最常用的“小块行为”，详细用法见<a href="#doc-tut-closure">闭包与函数值</a>。</p>
 
@@ -1004,7 +1001,7 @@ n = n % <span class="num">3</span>  <span class="comment">// 1   取余要手写
                                 <p>常用在“当场给一个行为”的地方，比如事件回调：</p>
                                 <div class="code-window code-window-inline">
                                     <div class="code-body">
-<pre><span class="funcCall">ui.on</span>(btn, <span class="str">"click"</span>, <span class="kw">func</span>(e) { <span class="builtin">prln</span>(<span class="str">"点了"</span>, e.x, e.y) })</pre>
+<pre><span class="builtin">sort</span>(items, <span class="kw">func</span>(a, b) { <span class="kw">return</span> a.n &lt; b.n })</pre>
                                     </div>
                                 </div>
                                 <div class="doc-callout doc-callout-warning">
@@ -1083,7 +1080,7 @@ n = n % <span class="num">3</span>  <span class="comment">// 1   取余要手写
                                 <div class="code-window code-window-inline">
                                     <div class="code-body">
 <pre><span class="kw">local</span> arr = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>}              <span class="comment">// 数组：键是 1、2、3</span>
-<span class="kw">local</span> rec = {name = <span class="str">"Ae"</span>, ver = <span class="num">1.7</span>}    <span class="comment">// 记录：键是字符串</span>
+<span class="kw">local</span> rec = {name = <span class="str">"Ae"</span>, ver = <span class="num">2.1</span>}    <span class="comment">// 记录：键是字符串</span>
 <span class="kw">local</span> mix = {<span class="num">1</span>, <span class="num">2</span>, tag = <span class="str">"x"</span>}            <span class="comment">// 混着写也行</span>
 <span class="kw">local</span> empty = {}                          <span class="comment">// 空表</span></pre>
                                     </div>
@@ -1104,7 +1101,7 @@ t[<span class="num">4</span>] = <span class="num">40</span>                  <sp
 
 <span class="kw">local</span> r = {name = <span class="str">"Ae"</span>}
 <span class="builtin">prln</span>(r.name, r[<span class="str">"name"</span>])   <span class="comment">// Ae Ae   点号等价于用字符串键</span>
-r.ver = <span class="num">1.7</span>                 <span class="comment">// 点号也能写</span></pre>
+r.ver = <span class="num">2.1</span>                 <span class="comment">// 点号也能写</span></pre>
                                     </div>
                                 </div>
                                 <p>读不存在的键得到 <code>null</code>，不会报错——所以 <code>if (t[k] == null)</code> 是判断“有没有这个键”的常用写法。</p>
@@ -1243,7 +1240,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
 
                             <article class="doc-section" id="doc-tut-module">
                                 <h1>模块：写自己的库</h1>
-                                <p class="doc-lede"><code>imp</code> 一行就能装进一个库。库分两种：工具链自带的（io / os / path / json / args / ui），和用 Ae 自己写的 <code>.m</code> 模块——后者就是这一课要教你怎么写。</p>
+                                <p class="doc-lede"><code>imp</code> 一行就能装进一个库。库分两种：工具链自带的（io / os / path，编译进可执行文件）和用 Ae 自己写的 <code>.m</code> 模块（json / args / math）——后者就是这一课要教你怎么写。</p>
 
                                 <h2>导入自带库</h2>
                                 <div class="code-window code-window-inline">
@@ -1537,13 +1534,13 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                     <li>加一个 <code>--top N</code>：统计出现最多的 N 个词（用表当计数器：<code>count[word] = (count[word] or 0) + 1</code>）。</li>
                                     <li>加 <code>-r</code> 递归处理目录：<code>io.isDir</code> + <code>io.listDir</code>（见 <a href="#doc-lib-io">io</a>）。</li>
                                     <li>给结果加时间戳：<code>os.formatTime(os.time())</code>（见 <a href="#doc-lib-os">os</a>）。</li>
-                                    <li>用 <a href="#doc-lib-ui-window">ui</a> 把统计结果画成一个窗口：条形图 + 文字，正好练习图形与事件。</li>
+                                    <li>用 <a href="#doc-lib-json">json</a> 把统计结果写成 JSON 文件，再用 <code>imp</code> 读回来核对——正好练习模块与文件读写。</li>
                                 </ul>
                             </article>
 
                             <article class="doc-section" id="doc-lib-overview">
                                 <h1>标准库总览</h1>
-                                <p class="doc-lede">除了 32 个内置函数，Ae 自带六个库：文件、系统、路径、JSON、命令行、图形界面。这一页讲怎么导入、怎么找文件、以及所有库都遵守的两条错误约定。</p>
+                                <p class="doc-lede">除了 38 个内置函数，Ae 自带六个库：文件、系统、路径、JSON、命令行、数学。其中 <code>io</code> / <code>os</code> / <code>path</code> 编译进工具链本体，<code>json</code> / <code>args</code> / <code>math</code> 是用 Ae 自己写的 <code>.m</code> 模块。这一页讲怎么导入、怎么找文件、以及所有库都遵守的两条错误约定。</p>
 
                                 <h2>有哪些库</h2>
                                 <table class="doc-table">
@@ -1555,7 +1552,8 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                         <tr><td><code>path</code></td><td><code>imp path</code></td><td>拼路径、取扩展名/文件名、规范化</td><td><a href="#doc-lib-path">path</a></td></tr>
                                         <tr><td><code>json</code></td><td><code>imp json</code></td><td>表和 JSON 文本互转（含读写文件、美化输出）</td><td><a href="#doc-lib-json">json</a></td></tr>
                                         <tr><td><code>args</code></td><td><code>imp args</code></td><td>命令行参数解析、帮助文本生成</td><td><a href="#doc-lib-args">args</a></td></tr>
-                                        <tr><td><code>ui</code></td><td><code>imp ui</code></td><td>窗口、绘制、文字、图片、事件、定时器</td><td><a href="#doc-lib-ui-window">ui（一）</a></td></tr>
+                                        <tr><td><code>math</code></td><td><code>imp math</code></td><td>69 个数学函数：三角 / 双曲 / 对数 / 取整 / 组合 / 统计 / 随机</td><td><a href="#doc-lib-math">math</a></td></tr>
+                                        <tr><td>（AOT）</td><td><code>aec --aot</code></td><td>把 .ae 转译成 C++ 并编译成可执行文件</td><td><a href="#doc-lib-aot">AOT</a></td></tr>
                                     </tbody>
                                 </table>
                                 <p>前两个是<strong>原生库</strong>（C++ 写的 <code>.dll</code> / <code>.so</code>）；<code>json</code> 和 <code>args</code> 是<strong>用 Ae 自己写的模块</strong>（<code>.m</code>），你可以打开它们照着自己的模块写。</p>
@@ -1577,7 +1575,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                     <li><code>imp</code> 写在文件顶部、函数外面；可以写多行。</li>
                                     <li>调用统一是 <code>库名.函数名(...)</code>。</li>
                                     <li>用了没导入的库 → 编译期 <code>E1013</code>；库里没有这个函数 → <code>E1012</code>；库文件找不到 → <code>E1014</code>；原生库版本和工具链不匹配 → <code>E1015</code>。</li>
-                                    <li><code>io</code> / <code>os</code> / <code>path</code> / <code>ui</code> 在 Windows 上是 <code>Apt\lib\*.dll</code>；<code>json.m</code> / <code>args.m</code> 也在同一个目录。自己的模块放脚本旁边就行——搜索顺序见<a href="#doc-tut-module">模块</a>。</li>
+                                    <li><code>io</code> / <code>os</code> / <code>path</code> 是头文件实现，<strong>编译进 <code>aec</code> 与 <code>ae</code> 本体</strong>，不需要任何 <code>.dll</code> / <code>.so</code>。<code>json.m</code> / <code>args.m</code> / <code>math.m</code> 是源码模块，放在可执行文件旁的 <code>lib/</code> 即可。自己的模块放脚本旁边就行——搜索顺序见<a href="#doc-tut-module">模块</a>。</li>
                                 </ul>
 
                                 <h2>所有库都遵守的两条错误约定</h2>
@@ -1587,7 +1585,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                     <tbody>
                                         <tr>
                                             <td><strong>预期失败</strong><br>文件不存在、目录不可写、环境变量没设置、图片格式不支持…</td>
-                                            <td>返回 <code>null</code> 或 <code>false</code>，并记住原因；用 <code>库.lastError()</code> 取文字说明（<code>io</code> / <code>os</code> / <code>path</code> / <code>ui</code> 都有）</td>
+                                            <td>返回 <code>null</code> 或 <code>false</code>，并记住原因；用 <code>库.lastError()</code> 取文字说明（<code>io</code> / <code>os</code> / <code>path</code> 都有）</td>
                                             <td><code>if (x == null) { … }</code> 判断，**不要**用 try</td>
                                         </tr>
                                         <tr>
@@ -1617,15 +1615,16 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                     <li>读写文件时如果需要指定编码，目前只有 UTF-8 / 二进制两种路线（见 <a href="#doc-lib-io">io</a> 的 <code>readBytes</code>）。</li>
                                 </ul>
 
-                                <h2>大库 ui 的读法</h2>
-                                <p><code>ui</code> 是最大的库（60 多个函数），文档按用途拆成五页：</p>
+                                <h2>两个用 Ae 写的模块</h2>
+                                <p><code>json</code>、<code>args</code>、<code>math</code> 都是<strong>用 Ae 自己写的</strong>（不是 C++），源码就在 <code>Apt/lib/</code> 下，本身就是写模块的范例：</p>
                                 <ul class="doc-list">
-                                    <li><a href="#doc-lib-ui-window">ui（一）窗口与消息循环</a>：建窗口、显示、跑消息循环</li>
-                                    <li><a href="#doc-lib-ui-shape">ui（二）图形与绘制</a>：点线面、路径、画布、图片、变换、裁剪、渐变</li>
-                                    <li><a href="#doc-lib-ui-text">ui（三）文字</a>：文字对象、度量、折行、对齐</li>
-                                    <li><a href="#doc-lib-ui-event">ui（四）事件与定时器</a>：鼠标/键盘事件、回调表字段、冒泡规则、定时器</li>
-                                    <li><a href="#doc-lib-ui-prop">ui（五）属性总表</a>：<code>set</code> / <code>get</code> / <code>props</code> 能用的所有属性</li>
+                                    <li><a href="#doc-lib-json">json</a>：<code>decode</code> / <code>encode</code> / <code>encodePretty</code>，解析失败抛 <code>E2008</code></li>
+                                    <li><a href="#doc-lib-args">args</a>：命令行参数解析，<code>parse</code> / <code>usage</code> / <code>intOr</code> / <code>floatOr</code></li>
+                                    <li><a href="#doc-lib-math">math</a>：69 个数学函数，定义域错误返回 <code>nan</code> 而不抛错</li>
                                 </ul>
+
+                                <h2>除了库，还能 AOT</h2>
+                                <p>想把脚本变成独立的可执行文件，不必依赖库——<code>aec --aot-exe</code> 会把 <code>.ae</code> 转译成 C++ 再编成可执行文件，详见 <a href="#doc-lib-aot">AOT 一章</a>。</p>
                             </article>
 
                             <article class="doc-section" id="doc-lib-builtin">
@@ -1731,7 +1730,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
 
                                 <div class="doc-callout">
                                     <strong>还有更多？</strong>
-                                    <p>文件、时间、路径、JSON、命令行、图形界面都不在内置里，要用 <code>imp</code> 导入——见<a href="#doc-lib-overview">标准库总览</a>。</p>
+                                    <p>文件、时间、路径、JSON、命令行、数学都不在内置函数里，要用 <code>imp</code> 导入——见<a href="#doc-lib-overview">标准库总览</a>。</p>
                                 </div>
                             </article>
 
@@ -2170,670 +2169,117 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                 </div>
                             </article>
 
-                            <article class="doc-section" id="doc-lib-ui-window">
-                                <h1>ui（一）窗口与消息循环</h1>
-                                <p class="doc-lede"><code>ui</code> 是 Ae 的图形界面库（Win32 + GDI+ 封装，纯原生 C++）。它只给底层零件：窗口、图形对象、文字、事件、定时器。所有控件——按钮、输入框、列表——都用这些零件拼。</p>
+                            <article class="doc-section" id="doc-lib-math">
+                                <h1>math：数学函数</h1>
+                                <p class="doc-lede">math 是用 <strong>Ae 自己写的</strong>模块（<code>Apt/lib/math.m</code>，不是 C++），共 <strong>69 个</strong>函数，覆盖三角、双曲、指数对数、幂、取整、组合、统计与随机。它不依赖任何外部库，<code>imp math</code> 即可使用。</p>
 
-                                <h2>最小可运行例子</h2>
+                                <h2>导入与调用</h2>
                                 <div class="code-window code-window-inline">
                                     <div class="code-body">
-<pre><span class="kw">imp</span> ui
+<pre><span class="kw">imp</span> math
 
-<span class="funcDef">func</span> <span class="funcName">main</span>() {
-    <span class="kw">local</span> w = <span class="funcCall">ui.window</span>(<span class="str">"我的第一个窗口"</span>, <span class="num">400</span>, <span class="num">300</span>)
-    <span class="funcCall">ui.show</span>(w)
-
-    <span class="kw">local</span> box = <span class="funcCall">ui.rect</span>(w, <span class="num">20</span>, <span class="num">20</span>, <span class="num">120</span>, <span class="num">80</span>)
-    <span class="funcCall">ui.setAll</span>(box, {fill = <span class="bool">true</span>, fillColor = <span class="str">"#3B82F6"</span>})
-
-    <span class="funcCall">ui.run</span>(w)                 <span class="comment">// 阻塞在这里：一直派发事件，直到窗口被关闭</span>
-}</pre>
-                                    </div>
-                                </div>
-                                <p>三条要点：</p>
-                                <ul class="doc-list">
-                                    <li>窗口默认<strong>是隐藏的</strong>，要 <code>ui.show(w)</code> 才出现。</li>
-                                    <li>图形是<strong>对象</strong>：建出来拿 id，之后 <code>ui.set</code> / <code>ui.setAll</code> 改属性会立刻重画。</li>
-                                    <li>必须有人<strong>跑消息循环</strong>：<code>ui.run(w)</code> 阻塞式（最简单），或用 <code>ui.pump()</code> 自己写循环。</li>
-                                </ul>
-
-                                <h2>窗口函数一览</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>函数</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>ui.window(标题, 宽, 高)</code></td><td>建窗口（隐藏），返回 id；失败返回 <code>null</code> + <code>ui.lastError()</code>。尺寸是<strong>客户区</strong>大小。</td></tr>
-                                        <tr><td><code>ui.show(id)</code> / <code>ui.hide(id)</code></td><td>显示 / 隐藏窗口。</td></tr>
-                                        <tr><td><code>ui.close(id)</code></td><td>关闭窗口（连带它的图形一起失效）。</td></tr>
-                                        <tr><td><code>ui.title(id, 文本)</code> / <code>ui.titleOf(id)</code></td><td>设 / 读标题栏文字。</td></tr>
-                                        <tr><td><code>ui.size(id, 宽, 高)</code> / <code>ui.pos(id, x, y)</code></td><td>改客户区尺寸 / 屏幕位置。</td></tr>
-                                        <tr><td><code>ui.resizable(id, 是否)</code> / <code>ui.maximizable(id, 是否)</code></td><td>能不能拖边改大小 / 能不能最大化。</td></tr>
-                                        <tr><td><code>ui.minimize(id)</code> / <code>ui.maximize(id)</code> / <code>ui.restore(id)</code></td><td>最小化 / 最大化 / 还原。</td></tr>
-                                        <tr><td><code>ui.beginDrag(id)</code></td><td>开始拖动窗口（在自绘标题栏的 <code>mousedown</code> 回调里调）。见下面“拖动窗口”。</td></tr>
-                                        <tr><td><code>ui.visible(id)</code></td><td>窗口当前可见吗。</td></tr>
-                                        <tr><td><code>ui.count()</code></td><td>还活着几个窗口。</td></tr>
-                                        <tr><td><code>ui.info(id)</code></td><td>一次性读回窗口状态（字段见下表）。</td></tr>
-                                        <tr><td><code>ui.pump()</code></td><td>处理一轮消息，<strong>不阻塞</strong>；返回还活着的窗口数。</td></tr>
-                                        <tr><td><code>ui.run(id)</code></td><td><strong>阻塞</strong>派发消息直到该窗口关闭；<code>ui.run(0)</code> 表示等到所有窗口都关闭。</td></tr>
-                                        <tr><td><code>ui.lastError()</code></td><td>上一次“预期失败”的原因（建窗口失败、尺寸非法等）。</td></tr>
-                                    </tbody>
-                                </table>
-
-                                <h2>ui.info(id) 的字段</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>字段</th><th>含义</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>id</code> <code>alive</code> <code>visible</code> <code>title</code></td><td>id、是否还活着、是否可见、标题</td></tr>
-                                        <tr><td><code>x</code> <code>y</code> <code>w</code> <code>h</code></td><td>屏幕位置（含边框）与<strong>客户区</strong>尺寸</td></tr>
-                                        <tr><td><code>winW</code> <code>winH</code></td><td>整个窗口的尺寸（含标题栏边框）：<code>winH - h</code> 就是标题栏+边框占的高度</td></tr>
-                                        <tr><td><code>resizable</code> <code>maximizable</code> <code>minimizable</code> <code>maximized</code></td><td>各种窗口状态</td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="kw">local</span> i = <span class="funcCall">ui.info</span>(w)
-<span class="builtin">prln</span>(i.w, <span class="str">"x"</span>, i.h, <span class="str">"| 标题:"</span>, i.title, <span class="str">"| 边框高度:"</span>, i.winH - i.h)</pre>
+<span class="builtin">prln</span>(math.sqrt(<span class="num">2.0</span>))          <span class="comment">// 1.4142135623730951</span>
+<span class="builtin">prln</span>(math.sin(math.pi() / <span class="num">2</span>))  <span class="comment">// 1.0</span>
+<span class="builtin">prln</span>(math.round(<span class="num">3.14159</span>, <span class="num">2</span>))   <span class="comment">// 3.14</span></pre>
                                     </div>
                                 </div>
 
-                                <h2>两种消息循环</h2>
-                                <p><strong>方式一：<code>ui.run(w)</code>（推荐）</strong>——阻塞式，库自己循环，有定时器时会自动睡 1ms 让动画继续。</p>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.run</span>(w)                              <span class="comment">// 直到 w 被关闭</span>
-<span class="funcCall">ui.run</span>(<span class="num">0</span>)                              <span class="comment">// 直到所有窗口都关掉</span></pre>
-                                    </div>
-                                </div>
-                                <p><strong>方式二：自己写循环</strong>——需要同时干别的活（后台计算、串口、批处理）时用：</p>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="kw">while</span> (<span class="funcCall">ui.count</span>() &gt; <span class="num">0</span>) {
-    <span class="funcCall">ui.pump</span>()                          <span class="comment">// 处理消息 + 派发事件/定时器</span>
-    <span class="comment">// … 这里干你自己的活 …</span>
-    <span class="funcCall">os.sleep</span>(<span class="num">16</span>)                      <span class="comment">// 不加 sleep 会把 CPU 跑满</span>
-}</pre>
-                                    </div>
-                                </div>
-                                <div class="doc-callout doc-callout-warning">
-                                    <strong>不跑循环 = 窗口假死</strong>
-                                    <p>窗口的消息必须有人处理：如果你卡在一个很长的运算或 <code>os.sleep</code> 里不出来，窗口就点不动、也不重画。要长时间干活就<strong>分片</strong>做（每帧做一点，然后 <code>ui.pump()</code>）。</p>
+                                <h2>常量也是函数</h2>
+                                <p>常量一律写成<strong>函数调用</strong>形式（这是历史 API，保持兼容）：<code>math.pi()</code>、<code>math.e()</code>、<code>math.tau()</code>、<code>math.sqrt2()</code>、<code>math.sqrt3()</code>、<code>math.phi()</code>、<code>math.ln2()</code>、<code>math.ln10()</code>、<code>math.log2e()</code>、<code>math.log10e()</code>、<code>math.epsilon()</code>、<code>math.huge()</code>、<code>math.nan()</code>。</p>
+
+                                <h2>分类速查</h2>
+                                <div class="doc-table-wrap">
+                                    <table class="doc-table">
+                                        <thead><tr><th>类别</th><th>函数</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>取整与符号</td><td><code>abs</code> <code>ceil</code> <code>floor</code> <code>round</code> <code>roundN</code> <code>trunc</code> <code>frac</code> <code>sign</code> <code>clamp</code></td></tr>
+                                            <tr><td>幂与根</td><td><code>sqrt</code> <code>cbrt</code> <code>pow</code> <code>exp</code> <code>expm1</code> <code>hypot</code></td></tr>
+                                            <tr><td>对数</td><td><code>log</code> <code>logN</code> <code>log2</code> <code>log10</code></td></tr>
+                                            <tr><td>三角</td><td><code>sin</code> <code>cos</code> <code>tan</code> <code>asin</code> <code>acos</code> <code>atan</code> <code>atan2</code> <code>rad</code> <code>deg</code></td></tr>
+                                            <tr><td>双曲</td><td><code>sinh</code> <code>cosh</code> <code>tanh</code> <code>asinh</code> <code>acosh</code> <code>atanh</code></td></tr>
+                                            <tr><td>组合与数论</td><td><code>factorial</code> <code>comb</code> <code>perm</code> <code>gcd</code> <code>lcm</code> <code>mod</code> <code>fmod</code></td></tr>
+                                            <tr><td>统计与插值</td><td><code>min</code> <code>max</code> <code>minOf</code> <code>maxOf</code> <code>sum</code> <code>mean</code> <code>lerp</code></td></tr>
+                                            <tr><td>随机</td><td><code>rand</code> <code>randInt</code> <code>randFloat</code></td></tr>
+                                            <tr><td>判断</td><td><code>isNaN</code> <code>isInf</code> <code>isFinite</code> <code>isClose</code> <code>isCloseE</code></td></tr>
+                                        </tbody>
+                                    </table>
                                 </div>
 
-                                <h2>拖动窗口</h2>
-                                <p>普通窗口拖标题栏由系统负责，不用写代码；<strong>自绘标题栏</strong>（<code>frameless</code> 窗口）要自己接：</p>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.set</span>(w, <span class="str">"frameless"</span>, <span class="bool">true</span>)            <span class="comment">// 去掉系统标题栏</span>
-<span class="kw">local</span> bar = <span class="funcCall">ui.rect</span>(w, <span class="num">0</span>, <span class="num">0</span>, <span class="num">400</span>, <span class="num">32</span>)
-<span class="funcCall">ui.setAll</span>(bar, {fill = <span class="bool">true</span>, fillColor = <span class="str">"#334155"</span>, cursor = <span class="str">"sizeall"</span>})
-<span class="funcCall">ui.on</span>(bar, <span class="str">"mousedown"</span>, <span class="kw">func</span>(e) { <span class="funcCall">ui.beginDrag</span>(w) })</pre>
-                                    </div>
-                                </div>
-                                <p><code>ui.beginDrag(w)</code> 不会阻塞脚本：库接管鼠标，跟手移动窗口，松手结束——所以拖动期间动画照跑（详见<a href="#doc-lib-ui-event">事件与定时器</a>）。无边框窗口的<strong>边缘</strong>还能拖大改小，库自己在 <code>WM_NCHITTEST</code> 里认边缘。</p>
+                                <h2>变参与默认参数</h2>
+                                <p><code>math.min</code> / <code>math.max</code> / <code>math.sum</code> / <code>math.mean</code> 吃变参：<code>math.min(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>)</code>。
+                                <code>math.round(x, <span class="num">2</span>)</code> 的第二参数默认 <code>0</code>，<code>math.isClose(a, b)</code> 也有默认容差。</p>
 
-                                <h2>坐标、尺寸与 DPI</h2>
-                                <ul class="doc-list">
-                                    <li>窗口<strong>客户区</strong>左上角是 <code>(0,0)</code>，x 向右、y 向下（和 Windows 一致）。</li>
-                                    <li>本库会让进程变成 <strong>DPI 感知</strong>：坐标和尺寸都是<strong>真实像素</strong>。在 125% 缩放的屏幕上，400 像素看起来比“不感知”时小 20%，但不会糊。</li>
-                                    <li>用不支持 DPI 感知的程序（比如 PowerShell 默认模式）去查询本窗口，会拿到被系统虚拟化过的坐标——数值对不上是正常的。</li>
-                                </ul>
-
-                                <h2>性能与限制（值得先知道）</h2>
-                                <ul class="doc-list">
-                                    <li>只有<strong>脏矩形</strong>局部重画：改一个图形只重画它占的那一小块，矩形外的像素不动；窗口还有一张离屏缓冲，所以改属性不会闪。</li>
-                                    <li>实测（700x470）：空窗口整面重画 &lt;1ms；<strong>开启抗锯齿的图形每个约 0.4ms</strong>；一帧只动一个小图形 ≈ 0ms。</li>
-                                    <li>所以：静态装饰画进<a href="#doc-lib-ui-shape">画布</a>只贴一次；大块轴对齐的纯色/矩形关掉 <code>aa</code>；动画里别每帧改几百个图形。</li>
-                                    <li><code>ui.pixel()</code> 是读离屏缓冲（给测试/取色用），别放在动画循环里每帧读整屏。</li>
-                                    <li>库<strong>不提供布局引擎</strong>：位置尺寸都自己算（可以写在 <code>resize</code> 事件里重新摆）。</li>
-                                    <li>没有输入框/列表/菜单这些现成控件——用<a href="#doc-lib-ui-shape">组</a>+文字+事件自己拼（这就是 <code>ui</code> 的设计取向：只给零件）。</li>
-                                </ul>
-                            </article>
-
-                            <article class="doc-section" id="doc-lib-ui-shape">
-                                <h1>ui（二）图形与绘制</h1>
-                                <p class="doc-lede">点、线、多边形、矩形、圆、椭圆是基本图形；路径能画任意几何；画布是离屏缓存；组把一堆图形当一个整体。它们都是对象：建出来拿 id，随时改属性。</p>
-
-                                <h2>建图形</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>函数</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>ui.point(表面, x, y)</code></td><td>圆点（默认实心、半径 2）。</td></tr>
-                                        <tr><td><code>ui.line(表面, x1, y1, x2, y2)</code></td><td>线段（按 <code>stroke</code> 宽度画）。</td></tr>
-                                        <tr><td><code>ui.poly(表面, {x1,y1,x2,y2,…})</code></td><td>多边形/折线。默认闭合：<code>closed = false</code> 变折线（不填充）。</td></tr>
-                                        <tr><td><code>ui.rect(表面, x, y, 宽, 高)</code></td><td>矩形。</td></tr>
-                                        <tr><td><code>ui.roundRect(表面, x, y, 宽, 高, 圆角)</code></td><td>圆角矩形；四角不同用 <code>setAll</code> 的 <code>rtl rtr rbr rbl</code>。</td></tr>
-                                        <tr><td><code>ui.circle(表面, 圆心x, 圆心y, 半径)</code></td><td>圆。</td></tr>
-                                        <tr><td><code>ui.ellipse(表面, 圆心x, 圆心y, 半径x, 半径y)</code></td><td>椭圆。</td></tr>
-                                        <tr><td><code>ui.text(表面, x, y, 内容)</code></td><td>文字对象（<a href="#doc-lib-ui-text">下一章</a>）。</td></tr>
-                                        <tr><td><code>ui.path(表面[, 指令数组])</code></td><td>路径（下面单讲）。</td></tr>
-                                        <tr><td><code>ui.group(表面)</code></td><td>组/容器：把子图形当一个整体（下面单讲）。</td></tr>
-                                        <tr><td><code>ui.canvas(宽, 高)</code></td><td>离屏画布（下面单讲）。</td></tr>
-                                        <tr><td><code>ui.image(路径)</code></td><td>加载图片，返回 id（失败 <code>null</code> + <code>ui.lastError()</code>）。</td></tr>
-                                        <tr><td><code>ui.drawImage(目标, 来源, x, y[, 宽, 高])</code></td><td>把图片或画布贴到窗口/画布/组上；不给宽高就按原尺寸。</td></tr>
-                                    </tbody>
-                                </table>
-                                <p>所有“表面”都可以是<strong>窗口、画布或组</strong>：图形建在谁身上，坐标就是相对谁的。</p>
-
-                                <h2>改 / 读 / 删</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>函数</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>ui.set(id, 属性, 值)</code></td><td>改一个属性，返回 id（可以连着写）。</td></tr>
-                                        <tr><td><code>ui.setAll(id, {…})</code></td><td>一次改一批属性。</td></tr>
-                                        <tr><td><code>ui.get(id, 属性)</code></td><td>读一个属性（颜色一律返回字符串）。</td></tr>
-                                        <tr><td><code>ui.props(id)</code></td><td>读回一张表：所有通用属性 + 该种类的特殊项。</td></tr>
-                                        <tr><td><code>ui.remove(id)</code></td><td>删图形（删组会连子图形一起删）。</td></tr>
-                                        <tr><td><code>ui.clear(表面)</code></td><td>清空表面上的所有图形。</td></tr>
-                                        <tr><td><code>ui.shapes(表面)</code></td><td>表面上的顶层条目（图形 + 组）id 表，按绘制顺序。</td></tr>
-                                        <tr><td><code>ui.redraw(表面)</code></td><td>强制整面重画一次。</td></tr>
-                                        <tr><td><code>ui.pixel(表面, x, y)</code></td><td>取某个像素的颜色 <code>0xRRGGBB</code>（不含 alpha）；越界返回 <code>null</code>。给测试/取色用。</td></tr>
-                                        <tr><td><code>ui.damage(表面)</code></td><td>上一次重画的统计（重画了几个、跳过几个、脏区多大）——调试性能用。</td></tr>
-                                    </tbody>
-                                </table>
-                                <p>属性的完整清单（含默认值与坑）在<a href="#doc-lib-ui-prop">ui（五）属性总表</a>；一条最常用的组合：</p>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="kw">local</span> box = <span class="funcCall">ui.rect</span>(w, <span class="num">20</span>, <span class="num">20</span>, <span class="num">120</span>, <span class="num">60</span>)
-<span class="funcCall">ui.setAll</span>(box, {
-    fill = <span class="bool">true</span>, fillColor = <span class="str">"#3B82F6"</span>,     <span class="comment">// 实心填充</span>
-    stroke = <span class="num">2</span>, strokeColor = <span class="str">"#1E3A8A"</span>,     <span class="comment">// 2px 描边（以路径为中心线）</span>
-    rtl = <span class="num">12</span>, rtr = <span class="num">12</span>,                    <span class="comment">// 上左/上右圆角各自设</span>
-    z = <span class="num">5</span>,                                  <span class="comment">// 层级：小的先画（在下层）</span>
-})</pre>
-                                    </div>
-                                </div>
-
-                                <h2>路径：任意几何</h2>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="kw">local</span> p = <span class="funcCall">ui.path</span>(w)                     <span class="comment">// 也可以在建的时候直接给指令数组</span>
-<span class="funcCall">ui.moveTo</span>(p, <span class="num">10</span>, <span class="num">10</span>)                  <span class="comment">// 移动到起点（开新子路径）</span>
-<span class="funcCall">ui.lineTo</span>(p, <span class="num">90</span>, <span class="num">10</span>)
-<span class="funcCall">ui.quadTo</span>(p, <span class="num">110</span>, <span class="num">40</span>, <span class="num">90</span>, <span class="num">70</span>)          <span class="comment">// 二次贝塞尔：控制点, 终点</span>
-<span class="funcCall">ui.curveTo</span>(p, <span class="num">80</span>, <span class="num">90</span>, <span class="num">20</span>, <span class="num">90</span>, <span class="num">10</span>, <span class="num">70</span>)    <span class="comment">// 三次贝塞尔：控制点1, 控制点2, 终点</span>
-<span class="funcCall">ui.arc</span>(p, <span class="num">10</span>, <span class="num">40</span>, <span class="num">40</span>, <span class="num">40</span>, <span class="num">0</span>, <span class="num">180</span>)       <span class="comment">// 弧：外接矩形(x,y,w,h) + 起始角 + 扫过角（度）</span>
-<span class="funcCall">ui.closePath</span>(p)                       <span class="comment">// 闭合当前子路径</span>
-<span class="funcCall">ui.setAll</span>(p, {fill = <span class="bool">true</span>, fillColor = <span class="str">"#22C55E"</span>, stroke = <span class="num">2</span>})</pre>
-                                    </div>
-                                </div>
-                                <p>路径的指令都存在 <code>cmds</code> 属性里，可以 <code>get</code> / <code>set</code> / 序列化：</p>
-                                <table class="doc-table">
-                                    <thead><tr><th>指令</th><th>参数</th><th>含义</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>1</code></td><td>x y</td><td>移动（开新子路径）</td></tr>
-                                        <tr><td><code>2</code></td><td>x y</td><td>直线</td></tr>
-                                        <tr><td><code>3</code></td><td>cx cy x y</td><td>二次贝塞尔</td></tr>
-                                        <tr><td><code>4</code></td><td>c1x c1y c2x c2y x y</td><td>三次贝塞尔</td></tr>
-                                        <tr><td><code>5</code></td><td>x y w h start sweep</td><td>弧（度；0° 是三点钟方向、顺时针）</td></tr>
-                                        <tr><td><code>6</code></td><td>—</td><td>闭合当前子路径</td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="comment">// 直接用指令数组建路径（模块里加工好指令、脚本再建，很适合做图标）</span>
-<span class="kw">local</span> tri = <span class="funcCall">ui.path</span>(w, {<span class="num">1</span>, <span class="num">10</span>, <span class="num">60</span>, <span class="num">2</span>, <span class="num">50</span>, <span class="num">10</span>, <span class="num">2</span>, <span class="num">50</span>, <span class="num">60</span>, <span class="num">6</span>})</pre>
-                                    </div>
-                                </div>
-                                <p>路径的 <code>x</code> / <code>y</code> 是<strong>整体偏移</strong>（和 <code>poly</code> 一样），方便整条路径一起挪。</p>
-
-                                <h2>变换、裁剪、层级</h2>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.set</span>(bar, <span class="str">"angle"</span>, <span class="num">90</span>)              <span class="comment">// 旋转（度，顺时针），默认绕包围盒中心</span>
-<span class="funcCall">ui.set</span>(bar, <span class="str">"scale"</span>, <span class="num">1.5</span>)             <span class="comment">// 缩放</span>
-<span class="funcCall">ui.setAll</span>(bar, {anchorX = <span class="num">20</span>, anchorY = <span class="num">20</span>})   <span class="comment">// 指定旋转/缩放中心</span>
-<span class="funcCall">ui.set</span>(bar, <span class="str">"anchorAuto"</span>, <span class="bool">true</span>)        <span class="comment">// 恢复“自动取包围盒中心”</span>
-
-<span class="funcCall">ui.setAll</span>(item, {clipX = <span class="num">0</span>, clipY = <span class="num">0</span>, clipW = <span class="num">200</span>, clipH = <span class="num">120</span>})   <span class="comment">// 裁剪矩形（宽或高 &lt;= 0 = 不裁）</span>
-<span class="funcCall">ui.set</span>(a, <span class="str">"z"</span>, <span class="num">5</span>)                     <span class="comment">// z 小的先画（在下层）；同 z 按创建顺序</span></pre>
-                                    </div>
-                                </div>
-                                <ul class="doc-list">
-                                    <li>命中测试按<strong>逆变换</strong>算，所以旋转/缩放之后照样点得准。</li>
-                                    <li>裁剪矩形是<strong>图形自己坐标系</strong>里的：转过的图形，裁剪也跟着转；组上的裁剪是相对<strong>组自己</strong>的。</li>
-                                    <li>裁剪同时约束绘制和命中：被裁掉的部分点不到。</li>
-                                </ul>
-
-                                <h2>渐变 / 虚线 / 线帽线接</h2>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.setAll</span>(panel, {fill = <span class="bool">true</span>, fillColor = <span class="str">"#3B82F6"</span>, fillColor2 = <span class="str">"#8B5CF6"</span>,
-                  gradient = <span class="str">"vertical"</span>})          <span class="comment">// horizontal / vertical / diagonal</span>
-<span class="funcCall">ui.setAll</span>(dot, {fill = <span class="bool">true</span>, fillColor = <span class="str">"#FFFFFF"</span>, fillColor2 = <span class="str">"#3B82F6"</span>,
-                gradient = <span class="str">"radial"</span>})            <span class="comment">// 径向：中心是 fillColor、边缘是 fillColor2</span>
-<span class="funcCall">ui.setAll</span>(grid, {stroke = <span class="num">1</span>, dash = <span class="str">"6 3"</span>})       <span class="comment">// 虚线：画 6、空 3</span>
-<span class="funcCall">ui.setAll</span>(free, {stroke = <span class="num">3</span>, cap = <span class="str">"round"</span>, join = <span class="str">"round"</span>})</pre>
-                                    </div>
-                                </div>
-                                <ul class="doc-list">
-                                    <li><code>gradient</code>：<code>"linear"</code>（配 <code>gradientAngle</code> 角度）｜<code>"radial"</code>｜方向别名 <code>horizontal</code> / <code>vertical</code> / <code>diagonal</code>；空串 = 关闭渐变。</li>
-                                    <li><code>cap</code>：<code>flat</code>（默认）<code>round</code> <code>square</code>；<code>join</code>：<code>round</code>（默认）<code>miter</code> <code>bevel</code>。</li>
-                                    <li>这几项只影响<strong>绘制</strong>：虚线按钮的空隙也点得到（命中按完整笔画算）。</li>
-                                    <li>写错了（比如 <code>gradient = "blur"</code>）会<strong>明确报错并列出可用值</strong>，不会静默忽略。</li>
-                                </ul>
-
-                                <h2>组：把一堆图形当一个整体</h2>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="kw">local</span> g   = <span class="funcCall">ui.group</span>(w)
-<span class="kw">local</span> bg  = <span class="funcCall">ui.roundRect</span>(g, <span class="num">0</span>, <span class="num">0</span>, <span class="num">120</span>, <span class="num">40</span>, <span class="num">8</span>)   <span class="comment">// 子图形坐标【相对组】</span>
-<span class="kw">local</span> lab = <span class="funcCall">ui.text</span>(g, <span class="num">60</span>, <span class="num">20</span>, <span class="str">"确定"</span>)
-<span class="funcCall">ui.setAll</span>(lab, {align = <span class="str">"center"</span>, valign = <span class="str">"middle"</span>, hits = <span class="bool">false</span>})
-
-<span class="funcCall">ui.setAll</span>(g, {x = <span class="num">100</span>, y = <span class="num">60</span>})              <span class="comment">// 整组平移</span>
-<span class="funcCall">ui.set</span>(g, <span class="str">"angle"</span>, <span class="num">15</span>)                     <span class="comment">// 整组旋转（绕组的包围盒中心）</span>
-<span class="funcCall">ui.set</span>(g, <span class="str">"scale"</span>, <span class="num">1.2</span>)                    <span class="comment">// 整组缩放</span>
-<span class="funcCall">ui.setAll</span>(g, {clipX = <span class="num">0</span>, clipY = <span class="num">0</span>, clipW = <span class="num">120</span>, clipH = <span class="num">40</span>})   <span class="comment">// 整组裁剪</span></pre>
-                                    </div>
-                                </div>
-                                <ul class="doc-list">
-                                    <li><strong>内联容器</strong>：子图形直接画进父表面，所以子图形照样能单独 <code>set</code> / <code>get</code> / 命中。</li>
-                                    <li>变换<strong>层层叠加</strong>：外组的平移旋转作用在内组上、再作用到最里面的图形（嵌套组就是自然组合）。</li>
-                                    <li>组按自己的 <code>z</code> 整体排序；组内的子图形在组<strong>内部</strong>再按 z 排。</li>
-                                    <li>组没有自己的尺寸（<code>props(组).hasBounds</code> 说明有没有算出包围盒）；<code>ui.pixel(组, …)</code> 会明确报错。</li>
-                                    <li>事件会<strong>冒泡</strong>给组：点组里的图形，先给图形，再给它的组（由内向外），最后到窗口——见<a href="#doc-lib-ui-event">事件</a>。</li>
-                                </ul>
-
-                                <h2>画布：离屏缓存</h2>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="kw">local</span> cv = <span class="funcCall">ui.canvas</span>(<span class="num">200</span>, <span class="num">120</span>)              <span class="comment">// 一张离屏画布，默认全透明</span>
-<span class="kw">local</span> r  = <span class="funcCall">ui.rect</span>(cv, <span class="num">0</span>, <span class="num">0</span>, <span class="num">60</span>, <span class="num">40</span>)          <span class="comment">// 图形建在【画布】上</span>
-<span class="funcCall">ui.setAll</span>(r, {fill = <span class="bool">true</span>, fillColor = <span class="str">"#EF4444"</span>})
-<span class="funcCall">ui.drawImage</span>(w, cv, <span class="num">100</span>, <span class="num">100</span>)               <span class="comment">// 贴到窗口（可以缩放，也可以贴到另一个画布）</span></pre>
-                                    </div>
-                                </div>
-                                <ul class="doc-list">
-                                    <li>它是<strong>缓存</strong>：脏了才重画；改画布里的图形，贴它的窗口会自动跟着重画那一小块。</li>
-                                    <li>可以套娃（画布 A 贴画布 B，B 再贴窗口）；自环有保护。</li>
-                                    <li>用途：复杂图形只画一次（每帧只贴一张位图）、把一层 UI 整体缓存、双缓冲。</li>
-                                    <li>画布的内容可以直接 <code>ui.pixel(cv, x, y)</code> 取色，写测试很方便。</li>
-                                    <li>贴到窗口的图片/画布如果<strong>盖住了</strong>下面的图形，那些图形的命中仍然生效（命中只有图形算，图片也能接事件）。</li>
-                                </ul>
+                                <h2>失败约定：返回 nan，不抛错</h2>
+                                <p>math 延续"数值函数不中断程序"的约定：<strong>定义域错误返回 <code>nan</code></strong>（如 <code>math.sqrt(-<span class="num">1.0</span>)</code>、<code>math.log(<span class="num">0.0</span>)</code> 得 <code>-inf</code>），<strong>溢出返回 <code>inf</code></strong>。结果能顺着算式传下去，需要时用 <code>math.isNaN(v)</code> 检查。</p>
 
                                 <div class="doc-callout">
-                                    <strong>绘制顺序一句话</strong>
-                                    <p>按 <code>z</code> 从小到大（小的在下），同 <code>z</code> 按创建顺序（后建的在上面）；组占一个 <code>z</code> 位置，组内部再单独排。</p>
+                                    <strong>精度</strong>
+                                    <p>按 IEEE-754 double 实现：<code>sqrt</code> / <code>cbrt</code> / <code>floor</code> / <code>ceil</code> 与 C 的 <code>libm</code> 逐位一致，其余函数误差 ≤ 4 ulp。<code>|x| > 1e15</code> 的三角函数结果不可信。另外 Ae 不允许 int 与 float 直接比较（<code>E2001</code>），math 内部一律先 <code>float(x)</code>，调用时也建议传浮点。</p>
                                 </div>
                             </article>
 
-                            <article class="doc-section" id="doc-lib-ui-text">
-                                <h1>ui（三）文字</h1>
-                                <p class="doc-lede">文字也是图形对象：<code>ui.text()</code> 建出来，之后改内容、字体、字号、颜色、对齐、折行都跟改别的属性一样。度量（<code>measure</code>）和绘制用的是同一套算法，所以“量出来的”和“画出来的”永远一致。</p>
+                            <article class="doc-section" id="doc-lib-aot">
+                                <h1>AOT：编译成可执行文件</h1>
+                                <p class="doc-lede">除了默认的字节码路线，Ae 还能把 <code>.ae</code> 源码<strong>转译成 C++ 源码</strong>，再交给 C++ 编译器生成独立的可执行文件——不再需要 <code>ae</code> 虚拟机。这条路叫 AOT（Ahead-of-Time）。</p>
 
-                                <h2>建文字与度量</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>函数</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>ui.text(表面, x, y, 内容)</code></td><td>建一个文字对象。x/y 落在文字框的哪条边由 <code>align</code> / <code>valign</code> 决定。</td></tr>
-                                        <tr><td><code>ui.textSize(文字id[, 内容])</code></td><td>量文字框尺寸，返回 <code>{w, h}</code>；给了第二个参数就量那段内容（不改对象）。</td></tr>
-                                        <tr><td><code>ui.measure(内容[, 选项])</code></td><td><strong>不建对象</strong>直接量：返回 <code>{w, h, lines, lineH, lineW, charW, lineStart}</code>。选项和文字属性同名：<code>{size=16, font="Consolas", bold=true, wrap=120, lineGap=2}</code>。</td></tr>
-                                    </tbody>
-                                </table>
+                                <h2>两种用法</h2>
                                 <div class="code-window code-window-inline">
                                     <div class="code-body">
-<pre><span class="kw">local</span> m = <span class="funcCall">ui.measure</span>(<span class="str">"这是一段要折行的中文文本"</span>, {size = <span class="num">16</span>, wrap = <span class="num">60</span>, lineGap = <span class="num">2</span>})
-<span class="builtin">prln</span>(m.lines, <span class="str">"行，总高"</span>, m.h, <span class="str">"px，第一行宽度"</span>, m.lineW[<span class="num">1</span>])
-<span class="builtin">prln</span>(<span class="str">"第 3 个字符在自己行内的 x 偏移 ="</span>, m.charW[<span class="num">3</span>])       <span class="comment">// 做文本光标定位就靠它</span></pre>
-                                    </div>
-                                </div>
-                                <p>返回表的字段含义：</p>
-                                <ul class="doc-list">
-                                    <li><code>w</code> / <code>h</code>：整块文字的宽高（多行时 <code>h</code> 含行距）。</li>
-                                    <li><code>lines</code>：行数；<code>lineH</code>：单行高度。</li>
-                                    <li><code>lineW[i]</code>：第 i 行的宽度。</li>
-                                    <li><code>charW[i]</code>：第 i 个字符<strong>在自己行内</strong>的 x 偏移。</li>
-                                    <li><code>lineStart[i]</code>：第 i 行首字符在整串里的下标（1-based）。</li>
-                                </ul>
+<pre><span class="comment">// 只生成 C++ 源码，自己拿去编</span>
+<span class="prompt">$</span> aec hello.ae --aot -o hello.cpp
 
-                                <h2>文字属性</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>属性</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>text</code></td><td>内容字符串。<code>"\n"</code> 换行；不自动折行（要折行设 <code>wrap</code>）。</td></tr>
-                                        <tr><td><code>font</code></td><td>字体族名（UTF-8），例如 <code>"Consolas"</code>、<code>"微软雅黑"</code>。名字不存在会自动兜底到默认族，兜底成了什么看 <code>props().fontUsed</code>。</td></tr>
-                                        <tr><td><code>size</code></td><td>字号，单位是<strong>像素</strong>（em 尺寸），不是磅。</td></tr>
-                                        <tr><td><code>bold</code> / <code>italic</code></td><td>粗体 / 斜体。</td></tr>
-                                        <tr><td><code>color</code></td><td>文字颜色（<code>"#RRGGBB"</code> 等，见属性总表）。</td></tr>
-                                        <tr><td><code>align</code></td><td><code>left</code>（默认）<code>center</code> <code>right</code>：<strong>x 落在文字框的哪条边</strong>。</td></tr>
-                                        <tr><td><code>valign</code></td><td><code>top</code>（默认）<code>middle</code> <code>bottom</code>：y 落在文字框的哪条边。</td></tr>
-                                        <tr><td><code>wrap</code></td><td>折行宽度（0 = 不折行）。折行是库自己算的：优先在空格处断，中文这种没空格的硬断。</td></tr>
-                                        <tr><td><code>lineGap</code></td><td>行距（额外像素）。</td></tr>
-                                        <tr><td><code>trim</code></td><td><code>none</code>（默认，直接截掉）｜<code>ellipsis</code>（截断处加 <code>…</code>）。需要和 <code>wrap</code> 一起用。</td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="doc-callout doc-callout-warning">
-                                    <strong>文字没有 fill / stroke / w / h / points</strong>
-                                    <p>文字的大小由字体和内容决定。给文字设这些属性会<strong>明确报错</strong>（不会静默忽略），报错里会列出文字能用的属性。想读文字框尺寸用 <code>ui.textSize(t)</code> 或 <code>ui.props(t).tw / .th</code>。</p>
-                                </div>
-
-                                <h2>对齐：x/y 指的是哪条边</h2>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="comment">// 想让 (200, 150) 正好是文字中心：</span>
-<span class="funcCall">ui.setAll</span>(t, {x = <span class="num">200</span>, y = <span class="num">150</span>, align = <span class="str">"center"</span>, valign = <span class="str">"middle"</span>})
-<span class="comment">// 想让 (20, 20) 是左上角：</span>
-<span class="funcCall">ui.setAll</span>(t, {x = <span class="num">20</span>, y = <span class="num">20</span>, align = <span class="str">"left"</span>, valign = <span class="str">"top"</span>})</pre>
-                                    </div>
-                                </div>
-                                <p>文字框 = 按内容量出来的尺寸，所以对齐只是决定“这个框的哪条边贴到 x/y”。<code>align</code> 变了、内容变了、字号变了，框都会变——要做“文字居中于按钮”就把它放进<a href="#doc-lib-ui-shape">组</a>里，用 <code>align/valign</code> 居中。</p>
-
-                                <h2>折行与省略号</h2>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.setAll</span>(para, {size = <span class="num">15</span>, wrap = <span class="num">180</span>, lineGap = <span class="num">4</span>, color = <span class="str">"#334155"</span>})   <span class="comment">// 180px 宽内折行</span>
-<span class="funcCall">ui.set</span>(para, <span class="str">"wrap"</span>, <span class="num">120</span>)                                        <span class="comment">// 改宽度 → 实时重排</span>
-<span class="funcCall">ui.setAll</span>(title, {wrap = <span class="num">120</span>, trim = <span class="str">"ellipsis"</span>})                   <span class="comment">// 放不下就 …</span></pre>
-                                    </div>
-                                </div>
-                                <p>折行宽度实时变就能做“窗口缩放时文字重排”，也可以在 <a href="#doc-lib-ui-event">resize 事件</a>里按新宽度重设。</p>
-
-                                <h2>字体与显示效果</h2>
-                                <ul class="doc-list">
-                                    <li>字体按「族名+字号+粗+斜」缓存，不会每帧新建。</li>
-                                    <li>文字用<strong>灰度抗锯齿</strong>：清晰、不打彩边，而且离屏与屏上完全一致——所以 <code>ui.pixel</code> 的断言才有意义（测试里能精确校验文字画出来了）。</li>
-                                    <li>中文字体名要用系统里的名字（<code>"微软雅黑"</code>、<code>"Microsoft YaHei UI"</code> 都行）；<code>props().fontUsed</code> 会告诉你最后用的是哪个。</li>
-                                    <li>做“等宽对齐”的代码/日志显示，用 <code>"Consolas"</code> 这类等宽字体。</li>
-                                </ul>
-                            </article>
-
-                            <article class="doc-section" id="doc-lib-ui-event">
-                                <h1>ui（四）事件与定时器</h1>
-                                <p class="doc-lede">事件是脚本驱动界面的入口：注册回调、消息循环里派发。附加好处是不用自己写动画循环——<code>ui.timer</code> / <code>ui.tick</code> 就是帧回调。</p>
-
-                                <h2>注册与派发</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>函数</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>ui.on(id, 种类, 函数)</code></td><td>注册回调，返回 <code>true</code>。同一个对象可以注册多种、同种也可以注册多个（按注册顺序都跑）。</td></tr>
-                                        <tr><td><code>ui.off(id, 种类)</code></td><td>注销该种类的<strong>全部</strong>回调，返回注销了几个。</td></tr>
-                                        <tr><td><code>ui.offAll(id)</code></td><td>注销该对象的所有回调。</td></tr>
-                                        <tr><td><code>ui.handlers(id)</code></td><td>返回一张表：<strong>事件种类 → 注册了几个</strong>。例如 <code>ui.handlers(w).click</code> 是 <code>1</code>，没注册过就是 <code>null</code>。</td></tr>
-                                        <tr><td><code>ui.send(窗口, 种类[, {…}])</code></td><td>合成一个事件塞进队列，<strong>走和真实消息完全一样的派发路径</strong>。测试、快捷键、演示都用它。</td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.on</span>(btn, <span class="str">"click"</span>, <span class="kw">func</span>(e) {
-    <span class="builtin">prln</span>(<span class="str">"点了"</span>, e.x, e.y, <span class="str">"button ="</span>, e.button)
-    <span class="kw">return</span> <span class="bool">true</span>                 <span class="comment">// 吃掉：不再冒泡给组/窗口</span>
-})
-<span class="funcCall">ui.send</span>(w, <span class="str">"click"</span>, {x = <span class="num">40</span>, y = <span class="num">30</span>})     <span class="comment">// 合成点击（测试里最常用）</span>
-<span class="funcCall">ui.pump</span>()                            <span class="comment">// 队列里的事件在这里派发</span></pre>
-                                    </div>
-                                </div>
-                                <div class="doc-callout doc-callout-warning">
-                                    <strong>回调是在 <code>pump</code> / <code>run</code> 里跑的</strong>
-                                    <p>WndProc 只把消息<strong>入队</strong>，真正的回调统一在消息循环里派发。所以：<code>ui.send</code> 之后必须 <code>ui.pump()</code>（或已经在 <code>ui.run</code> 里）回调才会跑。好处是用户代码不会跑在窗口过程里——在回调里删控件、关窗口都是安全的。</p>
-                                </div>
-
-                                <h2>事件种类</h2>
-                                <table class="doc-table">
-                                    <thead><tr><th>种类</th><th>什么时候来</th><th>额外字段</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>click</code></td><td>同一个键按下→抬起且位移 ≤ 4px（<strong>合成的</strong>，Windows 本身不给 click）</td><td><code>x y button</code></td></tr>
-                                        <tr><td><code>dblclick</code></td><td>双击</td><td><code>x y button</code></td></tr>
-                                        <tr><td><code>mousedown</code> / <code>mouseup</code></td><td>按下 / 抬起（按下时库会 SetCapture，拖到窗口外也收得到抬起）</td><td><code>x y button</code></td></tr>
-                                        <tr><td><code>mousemove</code></td><td>鼠标在窗口里移动（很密，回调里别干重活）</td><td><code>x y</code></td></tr>
-                                        <tr><td><code>mouseenter</code> / <code>mouseleave</code></td><td>鼠标进入 / 离开某个对象（做悬停效果）</td><td><code>x y</code></td></tr>
-                                        <tr><td><code>wheel</code></td><td>滚轮</td><td><code>x y wheel</code>（向上 1、向下 -1）</td></tr>
-                                        <tr><td><code>keydown</code> / <code>keyup</code></td><td>按键（窗口有焦点时）</td><td><code>key keyName shift ctrl alt</code></td></tr>
-                                        <tr><td><code>char</code></td><td>可打印字符输入（做输入框用这个，不是 keydown）</td><td><code>key keyName</code></td></tr>
-                                        <tr><td><code>resize</code></td><td>窗口尺寸变了</td><td><code>w h</code>（新客户区尺寸）</td></tr>
-                                        <tr><td><code>close</code></td><td>用户点了关闭（回调里 <code>ui.close(w)</code> 才真关；不处理则默认关）</td><td>—</td></tr>
-                                    </tbody>
-                                </table>
-
-                                <h2>回调收到的 e 表</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>字段</th><th>含义</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>kind</code></td><td>事件种类（就是注册时写的那串）</td></tr>
-                                        <tr><td><code>win</code> / <code>target</code></td><td>窗口 id / <strong>当前收到事件的对象</strong> id（冒泡时每一层都不同）</td></tr>
-                                        <tr><td><code>x</code> <code>y</code></td><td>客户区坐标（鼠标类事件才有）</td></tr>
-                                        <tr><td><code>button</code></td><td>1 左键、2 右键、3 中键</td></tr>
-                                        <tr><td><code>wheel</code></td><td>滚轮方向：上 1、下 -1</td></tr>
-                                        <tr><td><code>key</code> / <code>keyName</code></td><td>虚拟键码 / 可读名（<code>"Enter"</code> <code>"Left"</code> <code>"A"</code>）；<code>char</code> 事件里的 key 是字符码</td></tr>
-                                        <tr><td><code>shift</code> <code>ctrl</code> <code>alt</code></td><td>修饰键是否按下（做快捷键/多选）</td></tr>
-                                        <tr><td><code>time</code></td><td>事件发生时刻（毫秒，程序启动起算）——算双击间隔、长按、拖动速度</td></tr>
-                                        <tr><td><code>w</code> <code>h</code></td><td><code>resize</code> 的新客户区尺寸</td></tr>
-                                    </tbody>
-                                </table>
-
-                                <h2>命中链与冒泡（重要）</h2>
-                                <p>一个点击落到哪里，按这条规则走：</p>
-                                <ol class="doc-list">
-                                    <li><strong>形状之间互斥</strong>：从上往下找，第一个<strong>注册了这种事件</strong>的对象接管；没注册的对象（装饰图形、文字标签）自动穿透给下面的——所以“按钮上盖着文字标签”也能点到按钮。</li>
-                                    <li><strong>然后冒泡给所在的组</strong>：由内向外一层层给（子图形 → 内层组 → 外层组 …）。</li>
-                                    <li><strong>最后冒泡到窗口</strong>：所以“点别处关掉菜单”只要在窗口上挂一个 click。</li>
-                                    <li>任何一层回调里 <code>return true</code> = <strong>吃掉</strong>，后面（包括窗口）都不再收到。</li>
-                                </ol>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.on</span>(box, <span class="str">"click"</span>, <span class="kw">func</span>(e) { <span class="builtin">prln</span>(<span class="str">"图形先收到"</span>) })          <span class="comment">// ① 直接命中</span>
-<span class="funcCall">ui.on</span>(card, <span class="str">"click"</span>, <span class="kw">func</span>(e) { <span class="builtin">prln</span>(<span class="str">"冒泡到卡片"</span>) })           <span class="comment">// ② 组</span>
-<span class="funcCall">ui.on</span>(w, <span class="str">"click"</span>, <span class="kw">func</span>(e) { <span class="builtin">prln</span>(<span class="str">"最后到窗口"</span>) })            <span class="comment">// ③ 窗口</span></pre>
-                                    </div>
-                                </div>
-                                <ul class="doc-list">
-                                    <li><code>hits = false</code> 的对象完全不参与命中（纯装饰件）。</li>
-                                    <li>被<a href="#doc-lib-ui-shape">裁剪</a>掉的部分点不到（命中也遵守裁剪）。</li>
-                                    <li>旋转/缩放过的图形命中照样准（按逆变换算）。</li>
-                                    <li>鼠标形状：<code>cursor</code> 设在图形上或窗口上（<code>hand</code> <code>ibeam</code> <code>sizewe</code>…）。</li>
-                                </ul>
-
-                                <h2>定时器</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>函数</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>ui.timer(毫秒, 函数)</code></td><td>周期回调（≥ 1ms）。返回定时器 id。</td></tr>
-                                        <tr><td><code>ui.timerOnce(毫秒, 函数)</code></td><td>只触发一次（0 表示下一轮就触发）。</td></tr>
-                                        <tr><td><code>ui.tick(函数)</code></td><td><strong>每次 pump/run 都调</strong>——动画就用它，不用自己写循环。</td></tr>
-                                        <tr><td><code>ui.cancelTimer(id)</code></td><td>取消，返回 <code>true</code>/<code>false</code>（重复取消返回 false）。</td></tr>
-                                        <tr><td><code>ui.timers()</code></td><td>还活着的定时器表：<code>id → {ms, once, count, frame}</code>。</td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="kw">local</span> t = <span class="num">0</span>
-<span class="funcCall">ui.tick</span>(<span class="kw">func</span>(e) {                    <span class="comment">// 每帧回调</span>
-    t += <span class="num">1</span>
-    <span class="funcCall">ui.set</span>(ball, <span class="str">"x"</span>, <span class="num">40</span> + (t % <span class="num">200</span>))
-})
-<span class="funcCall">ui.timer</span>(<span class="num">250</span>, <span class="kw">func</span>(e) { <span class="builtin">prln</span>(<span class="str">"每 250ms 一次，第"</span>, e.count + <span class="num">1</span>, <span class="str">"次"</span>) })
-<span class="funcCall">ui.timerOnce</span>(<span class="num">3000</span>, <span class="kw">func</span>(e) { <span class="funcCall">ui.set</span>(tip, <span class="str">"text"</span>, <span class="str">"3 秒到了"</span>) })
-<span class="funcCall">ui.run</span>(w)</pre>
-                                    </div>
-                                </div>
-                                <ul class="doc-list">
-                                    <li>回调 <code>e</code> 的字段：<code>kind</code>（<code>"timer"</code>）、<code>id</code>、<code>count</code>（<strong>这次触发之前</strong>的次数，所以第一次是 0）、<code>late</code>（迟到了几毫秒）。</li>
-                                    <li>定时器是<strong>脚本驱动</strong>的：没有线程，<code>pump</code>/<code>run</code> 里到点才调。所以脚本卡住时定时器也不跑（这是特性，不是 bug——一切都在一条线上）。</li>
-                                    <li>时间基准不累计误差：落后了就跳到下一个未来时刻（不会疯狂补发一堆）。</li>
-                                    <li>有定时器活着时库会把系统计时器精度提到 1ms，动画才不会被 <code>Sleep(1)</code> 拖到 30fps；定时器结束就还回去。</li>
-                                    <li>回调里可以 <code>cancelTimer</code> 自己；一次性定时器触发时自动注销。</li>
-                                </ul>
-
-                                <h2>ui.damage(表面)：看重画成本</h2>
-                                <p>改了属性以后到底重画了多少，可以直接问：</p>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>字段</th><th>含义</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>paints</code></td><td>累计重画次数</td></tr>
-                                        <tr><td><code>rects</code> / <code>full</code> / <code>x y w h</code></td><td>上次重画了几个矩形、是不是整面重画、重画区域的包围盒</td></tr>
-                                        <tr><td><code>drawn</code> / <code>skipped</code></td><td>上次真正画了几个图形 / 跳过了几个（在脏区外面，一个字节都没碰）</td></tr>
-                                        <tr><td><code>pending</code> / <code>pendingFull</code> / <code>px py pw ph</code></td><td>还没画的部分</td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.set</span>(box, <span class="str">"fillColor"</span>, <span class="str">"#22C55E"</span>)
-<span class="kw">local</span> d = <span class="funcCall">ui.damage</span>(w)
-<span class="builtin">prln</span>(<span class="str">"待重画"</span>, d.pending, <span class="str">"块，整面 ="</span>, d.pendingFull)
-<span class="funcCall">ui.pump</span>()
-<span class="builtin">prln</span>(<span class="str">"这次只画了"</span>, <span class="funcCall">ui.damage</span>(w).drawn, <span class="str">"个，跳过"</span>, <span class="funcCall">ui.damage</span>(w).skipped, <span class="str">"个"</span>)</pre>
-                                    </div>
-                                </div>
-                                <p>典型结果：改一个小图形 → <code>full = false</code>、<code>drawn</code> 是个位数；如果 <code>full = true</code>，说明这次区域算不准（宁可多画，不会画错）。</p>
-
-                                <h2>几条经验</h2>
-                                <ul class="doc-list">
-                                    <li><strong>回调里抛错 = 程序中止</strong>（和未捕获的运行期错误一样，带调用栈）。要在回调里兜错就自己 <code>try</code>。</li>
-                                    <li>回调里<strong>不要</strong>再调 <code>ui.run</code> / <code>ui.pump</code>（嵌套消息循环）。要“稍后再做”就用 <code>ui.timerOnce(0, …)</code>。</li>
-                                    <li>回调里可以安全地建/删对象、关窗口——库在派发前后都做了检查。</li>
-                                    <li><code>mousemove</code> 很密（鼠标一动就来一条），别在里面做重活；需要“每帧一次”就用 <code>ui.tick</code>。</li>
-                                    <li>拖动窗口期间（<code>ui.beginDrag</code> / 拖标题栏 / 拖边框改大小）动画不会停：库自己接管拖动，并在系统模态循环里用心跳继续派发定时器。</li>
-                                </ul>
-                            </article>
-
-                            <article class="doc-section" id="doc-lib-ui-prop">
-                                <h1>ui（五）属性总表</h1>
-                                <p class="doc-lede"><code>set</code> / <code>setAll</code> / <code>get</code> / <code>props</code> 是操作一切的入口。这一页把窗口、图形、文字的所有属性、默认值和只读项一次列全，并说清“写错了会怎样”。</p>
-
-                                <h2>四条规则</h2>
-                                <ul class="doc-list">
-                                    <li><strong>写错属性名会明确报错</strong>，并把<strong>这类对象能用的属性全列出来</strong>——不会静默忽略。</li>
-                                    <li><strong>属性与种类必须匹配</strong>：给文字设 <code>fill</code>、给矩形设文字属性、给窗口设图形属性，都会报错并说明原因。</li>
-                                    <li><strong>id 与种类必须匹配</strong>：把窗口 id 传给图形函数（或反过来）会立刻报错——“这是个窗口 id / 这是个图形 id”，不会恰好命中另一个对象。</li>
-                                    <li><strong>颜色读出来一律是字符串</strong>（<code>"#RRGGBB"</code> / <code>"#AARRGGBB"</code>）；写可以用字符串或整数。</li>
-                                </ul>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.set</span>(r, <span class="str">"fillColor"</span>, <span class="str">"#3B82F6"</span>)        <span class="comment">// 字符串</span>
-<span class="funcCall">ui.set</span>(r, <span class="str">"fillColor"</span>, <span class="num">0xFF3B82F6</span>)      <span class="comment">// 整数（> 0xFFFFFF 就当 AARRGGBB）</span>
-<span class="funcCall">ui.set</span>(r, <span class="str">"fillColor"</span>, <span class="num">255</span>)               <span class="comment">// ≤ 0xFFFFFF 当 RGB → "#0000FF"</span>
-<span class="builtin">prln</span>(<span class="funcCall">ui.get</span>(r, <span class="str">"fillColor"</span>))             <span class="comment">// 一律返回 "#0000FF"</span>
-<span class="funcCall">ui.setAll</span>(r, {fill = <span class="bool">true</span>, stroke = <span class="num">2</span>, z = <span class="num">5</span>})   <span class="comment">// 一次改一批</span></pre>
+<span class="comment">// 一步到位：直接编出可执行文件</span>
+<span class="prompt">$</span> aec hello.ae --aot-exe -O2
+<span class="output">[+] AOT 已生成可执行文件: hello</span>
+<span class="prompt">$</span> ./hello
+<span class="output">Hello, World.</span></pre>
                                     </div>
                                 </div>
 
-                                <h2>通用属性（所有图形 + 组都能用）</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>属性</th><th>默认</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>x</code> <code>y</code></td><td>0</td><td>位置：<code>point</code>/<code>circle</code>/<code>ellipse</code> 是中心；<code>rect</code>/<code>roundRect</code> 是左上角；<code>poly</code>/<code>path</code> 是整体偏移；<strong>组</strong>是整组平移</td></tr>
-                                        <tr><td><code>w</code> <code>h</code></td><td>0</td><td>矩形宽高（<code>poly</code> 用 <code>points</code>，文字用字体决定）</td></tr>
-                                        <tr><td><code>r</code></td><td>0</td><td>统一圆角 / <code>point</code> 半径 / <code>circle</code> 半径</td></tr>
-                                        <tr><td><code>rx</code> <code>ry</code></td><td>0</td><td>椭圆的两个半径</td></tr>
-                                        <tr><td><code>rtl</code> <code>rtr</code> <code>rbr</code> <code>rbl</code></td><td>0</td><td>四个角各自的圆角（为 0 就用 <code>r</code>）</td></tr>
-                                        <tr><td><code>x2</code> <code>y2</code></td><td>0</td><td><code>line</code> 的终点</td></tr>
-                                        <tr><td><code>points</code></td><td>—</td><td><code>poly</code> 的点：扁平数组 <code>{x1,y1,x2,y2,…}</code>（至少 2 点、偶数个）</td></tr>
-                                        <tr><td><code>closed</code></td><td><code>true</code></td><td><code>poly</code> 闭合（面）还是折线（不填充）</td></tr>
-                                        <tr><td><code>fill</code></td><td><code>false</code></td><td>实心 / 空心</td></tr>
-                                        <tr><td><code>fillColor</code></td><td><code>#000000</code></td><td>填充色；渐变时是<strong>起点/中心</strong>色</td></tr>
-                                        <tr><td><code>fillColor2</code></td><td><code>#000000</code></td><td>渐变另一端颜色</td></tr>
-                                        <tr><td><code>gradient</code></td><td><code>""</code></td><td><code>linear</code>｜<code>radial</code>｜<code>horizontal</code>｜<code>vertical</code>｜<code>diagonal</code>；空 = 纯色</td></tr>
-                                        <tr><td><code>gradientAngle</code></td><td>0</td><td>线性渐变角度（度，顺时针）</td></tr>
-                                        <tr><td><code>stroke</code></td><td>1</td><td>描边宽度，<strong>0 = 不描边</strong>；描边以路径为中心线（1px 正好压住边界）</td></tr>
-                                        <tr><td><code>strokeColor</code></td><td><code>#000000</code></td><td>描边色</td></tr>
-                                        <tr><td><code>dash</code></td><td><code>""</code></td><td>虚线样式，如 <code>"6 3"</code>（画 6 空 3）；空 = 实线</td></tr>
-                                        <tr><td><code>cap</code></td><td><code>flat</code></td><td>线帽：<code>flat</code> <code>round</code> <code>square</code></td></tr>
-                                        <tr><td><code>join</code></td><td><code>round</code></td><td>线接：<code>round</code> <code>miter</code> <code>bevel</code></td></tr>
-                                        <tr><td><code>aa</code></td><td><code>true</code></td><td>抗锯齿（关掉更快，大块纯色矩形建议关）</td></tr>
-                                        <tr><td><code>z</code></td><td>0</td><td>层级：小的先画（在下层）；同 z 按创建顺序</td></tr>
-                                        <tr><td><code>angle</code></td><td>0</td><td>旋转角度（度，顺时针）</td></tr>
-                                        <tr><td><code>scale</code></td><td>1</td><td>缩放倍数</td></tr>
-                                        <tr><td><code>anchorX</code> <code>anchorY</code></td><td>0</td><td>旋转/缩放中心（显式给就不再自动）</td></tr>
-                                        <tr><td><code>anchorAuto</code></td><td><code>true</code></td><td>是否“自动用包围盒中心”；设 <code>true</code> 可恢复自动</td></tr>
-                                        <tr><td><code>clipX</code> <code>clipY</code> <code>clipW</code> <code>clipH</code></td><td>0</td><td>裁剪矩形（<strong>宽或高 ≤ 0 = 不裁剪</strong>）；在对象自己的坐标系里</td></tr>
-                                        <tr><td><code>hits</code></td><td><code>true</code></td><td>是否参与命中（<code>false</code> = 鼠标穿透，纯装饰用）</td></tr>
-                                        <tr><td><code>cursor</code></td><td><code>""</code></td><td>鼠标形状：<code>arrow hand ibeam wait cross sizeall sizewe sizens sizenwse sizenesw no help up</code></td></tr>
-                                        <tr><td><code>cmds</code></td><td>—</td><td><strong>只有 <code>path</code> 有</strong>：路径指令流（见<a href="#doc-lib-ui-shape">图形与绘制</a>）</td></tr>
-                                        <tr><td><code>kind</code> <code>win</code></td><td>只读</td><td>图形种类名 / 所属表面（窗口、画布或组）的 id</td></tr>
-                                    </tbody>
-                                </table>
+                                <h2>常用参数</h2>
+                                <div class="doc-table-wrap">
+                                    <table class="doc-table">
+                                        <thead><tr><th>参数</th><th>作用</th></tr></thead>
+                                        <tbody>
+                                            <tr><td><code>--aot</code></td><td>生成 C++ 源码，不调用编译器</td></tr>
+                                            <tr><td><code>--aot-exe</code></td><td>生成 C++ 并编出可执行文件</td></tr>
+                                            <tr><td><code>-O0..3</code></td><td>优化级别（默认 <code>-O2</code>）</td></tr>
+                                            <tr><td><code>--cc=&lt;命令&gt;</code></td><td>指定外部 C++ 编译器</td></tr>
+                                            <tr><td><code>--target=&lt;三元组&gt;</code></td><td>交叉编译，如 <code>x86_64-windows-gnu</code></td></tr>
+                                            <tr><td><code>--keep-obj</code></td><td>保留中间 <code>.o</code> 文件（调试用）</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                                <h2>文字属性（只有 <code>ui.text</code> 的对象有）</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>属性</th><th>默认</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>text</code></td><td><code>""</code></td><td>内容（<code>\n</code> 换行；折行用 <code>wrap</code>）</td></tr>
-                                        <tr><td><code>font</code></td><td><code>""</code></td><td>字体族名，如 <code>"Consolas"</code>／<code>"微软雅黑"</code>；<strong>留空时实际用的是 <code>"Microsoft YaHei UI"</code></strong>（中文友好），写了一个不存在的族名也会兜底到它。真正用上的族名看 <code>props(id).fontUsed</code></td></tr>
-                                        <tr><td><code>size</code></td><td>16</td><td>字号（<strong>像素</strong>，不是磅）</td></tr>
-                                        <tr><td><code>bold</code> <code>italic</code></td><td><code>false</code></td><td>粗体 / 斜体</td></tr>
-                                        <tr><td><code>color</code></td><td><code>#000000</code></td><td>文字颜色</td></tr>
-                                        <tr><td><code>align</code></td><td><code>left</code></td><td><code>left</code> <code>center</code> <code>right</code>：x 落在文字框哪条边</td></tr>
-                                        <tr><td><code>valign</code></td><td><code>top</code></td><td><code>top</code> <code>middle</code> <code>bottom</code>：y 落在文字框哪条边</td></tr>
-                                        <tr><td><code>wrap</code></td><td>0</td><td>折行宽度（0 = 不折行）</td></tr>
-                                        <tr><td><code>lineGap</code></td><td>0</td><td>行距（额外像素）</td></tr>
-                                        <tr><td><code>trim</code></td><td><code>none</code></td><td><code>none</code>｜<code>ellipsis</code>（截断加 …，需配合 <code>wrap</code>）</td></tr>
-                                    </tbody>
-                                </table>
-                                <p>文字<strong>没有</strong> <code>fill</code> / <code>stroke</code> / <code>w</code> / <code>h</code> / <code>points</code> / <code>r</code> 这些——设了会报错。</p>
-
-                                <h2>窗口属性（<code>ui.set(窗口id, …)</code>）</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>属性</th><th>说明</th></tr></thead>
-                                    <tbody>
-                                        <tr><td><code>title</code></td><td>标题栏文字</td></tr>
-                                        <tr><td><code>x</code> <code>y</code></td><td>屏幕位置（含边框）</td></tr>
-                                        <tr><td><code>w</code> <code>h</code></td><td>客户区尺寸</td></tr>
-                                        <tr><td><code>visible</code></td><td>显示 / 隐藏</td></tr>
-                                        <tr><td><code>resizable</code> <code>maximizable</code></td><td>能不能拖边改大小 / 能不能最大化</td></tr>
-                                        <tr><td><code>frameless</code></td><td>去掉系统标题栏（自绘标题栏用）</td></tr>
-                                        <tr><td><code>cursor</code></td><td>窗口默认鼠标形状</td></tr>
-                                    </tbody>
-                                </table>
-
-                                <h2>props(id) 按种类的额外字段</h2>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>对象</th><th>额外字段</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>窗口</td><td><code>kind = "window"</code></td></tr>
-                                        <tr><td>画布</td><td><code>kind = "canvas"</code>，<code>w</code> <code>h</code> <code>shapes</code> <code>dirty</code></td></tr>
-                                        <tr><td>图片</td><td><code>kind = "image"</code>，<code>path</code> <code>w</code> <code>h</code></td></tr>
-                                        <tr><td>文字</td><td><code>kind = "text"</code>，<code>fontUsed</code>（真正用上的族名），<code>tw</code> <code>th</code>（文字框宽高）</td></tr>
-                                        <tr><td>组</td><td><code>kind = "group"</code>，<code>shapes</code>（子图形数），<code>hasBounds</code>（有没有包围盒）</td></tr>
-                                        <tr><td>图形</td><td><code>kind</code> = <code>"point" "line" "poly" "rect" "circle" "ellipse" "path" "text" "image"</code></td></tr>
-                                    </tbody>
-                                </table>
+                                <h2>需要外部编译器吗</h2>
+                                <p><code>--aot-exe</code> 分三种情况：</p>
+                                <div class="doc-table-wrap">
+                                    <table class="doc-table">
+                                        <thead><tr><th>环境</th><th>行为</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>构建时链入了 Clang + LLD</td><td>进程内编译，<strong>不需要任何外部编译器</strong></td></tr>
+                                            <tr><td>没链入，但系统有 g++ / clang++</td><td>自动调用外部编译器</td></tr>
+                                            <tr><td>都没有</td><td>保留 <code>.cpp</code>，自行编译；也可用 <code>--cc</code> 指定</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p>想让 <code>aec</code> 自带编译器（进程内编译、不依赖外部程序），先装 LLVM/Clang 套件再重新构建，构建脚本会自动探测 <code>llvm-config</code>：</p>
                                 <div class="code-window code-window-inline">
                                     <div class="code-body">
-<pre><span class="kw">local</span> pr = <span class="funcCall">ui.props</span>(box)
-<span class="builtin">prln</span>(pr.kind, pr.x, pr.y, pr.w, pr.h, pr.fill, pr.fillColor, pr.z, pr.angle, pr.scale)
-<span class="builtin">prln</span>(<span class="funcCall">ui.props</span>(t).fontUsed, <span class="funcCall">ui.props</span>(t).tw, <span class="funcCall">ui.props</span>(cv).dirty, <span class="funcCall">ui.props</span>(g).hasBounds)</pre>
+<pre><span class="prompt">$</span> pkg install clang llvm lld libllvm-static   <span class="comment"># Termux / Debian</span>
+<span class="prompt">$</span> brew install llvm                          <span class="comment"># macOS</span>
+<span class="prompt">$</span> ./build.sh                                 <span class="comment"># 重新构建后 aec 即具备进程内编译能力</span></pre>
                                     </div>
                                 </div>
+                                <p>Windows 上 MSVC 不启用此功能，请用 <code>clang++</code> 或 MinGW 的 <code>g++</code>。</p>
 
-                                <h2>渐变的四个名字是“糖”</h2>
-                                <p><code>vertical</code>／<code>horizontal</code>／<code>diagonal</code> 设进去以后，读回来会变成 <code>"linear"</code>＋一个角度——它们只是“线性渐变＋角度”的简写。要精确控制就先设 <code>gradient</code> 再设 <code>gradientAngle</code>；<code>radial</code> 只有 <code>"radial"</code> 一个值，不会被改写。</p>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.set</span>(r, <span class="str">"gradient"</span>, <span class="str">"vertical"</span>)
-<span class="builtin">prln</span>(<span class="funcCall">ui.get</span>(r, <span class="str">"gradient"</span>), <span class="funcCall">ui.get</span>(r, <span class="str">"gradientAngle"</span>))   <span class="comment">// linear 90</span>
-<span class="funcCall">ui.set</span>(r, <span class="str">"gradient"</span>, <span class="str">"horizontal"</span>)                                <span class="comment">// → linear 0</span>
-<span class="funcCall">ui.set</span>(r, <span class="str">"gradient"</span>, <span class="str">"diagonal"</span>)                                  <span class="comment">// → linear 45</span>
-<span class="funcCall">ui.set</span>(r, <span class="str">"gradient"</span>, <span class="str">"radial"</span>)                                    <span class="comment">// → radial（角度留着上一次的）</span></pre>
-                                    </div>
+                                <div class="doc-callout">
+                                    <strong>已知限制</strong>
+                                    <p>AOT 不支持<strong>协程</strong>（<code>coroutine.*</code>）与 <code>run()</code>：两者依赖切换调用栈，而 C++ 栈无法 unwind，遇到会在编译期报错。其余特性与字节码后端输出一致。</p>
                                 </div>
 
-                                <h2>读回来：<code>get</code> 与 <code>props</code> 的分工</h2>
-                                <p>能写的属性基本都能读，但<strong>只读信息分两处</strong>：<code>get</code> 只回答“这个表面自己知道的”，其余走 <code>props</code>。写错时两个函数都会报错并列出该种类的可用名单。</p>
-                                <table class="doc-table doc-table-wide">
-                                    <thead><tr><th>对象</th><th><code>ui.get(id, …)</code> 支持</th><th>只能从 <code>props(id)</code> 读</th></tr></thead>
-                                    <tbody>
-                                        <tr><td>窗口</td><td><code>title</code> <code>x</code> <code>y</code> <code>w</code> <code>h</code> <code>visible</code> <code>resizable</code> <code>maximizable</code> <code>frameless</code> <code>cursor</code> <code>kind</code></td><td>—（<code>ui.info</code> 给窗口自己的那套：<code>id alive winW winH minimizable maximized</code> 等）</td></tr>
-                                        <tr><td>画布</td><td><code>kind</code> <code>w</code> <code>h</code></td><td><code>shapes</code>（图形数）<code>dirty</code></td></tr>
-                                        <tr><td>图片</td><td><code>kind</code> <code>path</code> <code>w</code> <code>h</code></td><td>—</td></tr>
-                                        <tr><td>文字</td><td>文字属性表 + 通用项里文字支持的那些（<code>x y z visible aa hits cursor clip*</code>）</td><td><code>fontUsed</code> <code>tw</code> <code>th</code></td></tr>
-                                        <tr><td>组</td><td>通用项（<code>kind</code> 只读）</td><td><code>shapes</code> <code>hasBounds</code>；<code>w</code>/<code>h</code> 是 <code>null</code>（组没有自己的尺寸）</td></tr>
-                                    </tbody>
-                                </table>
-                                <div class="code-window code-window-inline">
-                                    <div class="code-body">
-<pre><span class="funcCall">ui.get</span>(cv, <span class="str">"shapes"</span>)        <span class="comment">// 报错: ui.get 画布只支持 kind / w / h</span>
-<span class="funcCall">ui.props</span>(cv).shapes        <span class="comment">// 图形数在这里</span>
-<span class="funcCall">ui.get</span>(g, <span class="str">"w"</span>)            <span class="comment">// 0（组没有尺寸）</span>
-<span class="funcCall">ui.props</span>(g).w              <span class="comment">// null</span></pre>
-                                    </div>
-                                </div>
-
-                                <div class="doc-callout doc-callout-warning">
-                                    <strong>几个容易记混的点</strong>
-                                    <p>① <code>anchorAuto</code> 是<strong>读得回、写得进</strong>的开关：设了 <code>anchorX/anchorY</code> 之后自动变 <code>false</code>，想回到“绕包围盒中心”就 <code>ui.set(x, "anchorAuto", true)</code>——注意原来的 <code>anchorX</code> 值<strong>还留着</strong>，只是暂时不生效。<br>
-                                       ② <code>clipX/clipY</code> 对<strong>图形</strong>来说是它在表面上的坐标；对<strong>组</strong>来说是相对组自己的坐标。<br>
-                                       ③ <code>fillColor</code> 在径向渐变里是<strong>中心</strong>色，在线性渐变里是<strong>起点</strong>色。<br>
-                                       ④ <strong>组不画自己</strong>：外观属性（<code>fill</code>／<code>strokeColor</code>／<code>gradient</code>…）写进去<strong>不会报错但也不会有任何效果</strong>，组上真正有意义的是 <code>x y z visible angle scale</code>＋锚点＋裁剪＋<code>hits</code>。对组取色 <code>ui.pixel</code> 会报错（它没有自己的画布）。<br>
-                                       ⑤ 组里的子图形坐标是<strong>组内坐标</strong>，取色/命中要用世界坐标（算上组的偏移）。</p>
-                                </div>
+                                <h2>为什么能不依赖外部编译器</h2>
+                                <p>常规做法是由 <code>aec</code> 去<strong>调用</strong>一个外部编译器程序。但安卓上应用私有目录只能执行单个二进制，再 fork 出第二个程序会撞权限。所以 Ae 把 Clang 与 LLD <strong>作为库链进了 <code>aec</code> 本体</strong>，"源码 → 目标文件 → 可执行文件"全程在自己进程内完成，做到全平台自包含。桌面端不受此限制，回退到系统编译器同样可用。</p>
                             </article>
 
                             <article class="doc-section" id="doc-err-read">
@@ -3040,7 +2486,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                         <tr><td><code>E2006</code></td><td><code>stackoverflow</code></td><td>递归太深（默认上限 10000 层）</td><td><code>调用栈溢出（超过 10000 层，可用 --max-depth 调整）</code></td></tr>
                                         <tr><td><code>E2007</code></td><td><code>assert</code></td><td><code>assert</code> 条件不成立</td><td><code>assert 失败: 一大于二是不可能的</code></td></tr>
                                         <tr><td><code>E2008</code></td><td><code>user</code></td><td>脚本自己报错：<code>error("…")</code>，或 <code>raise(…)</code> 没人接</td><td><code>没人接这个错误</code>（就是你传给 <code>error</code>/<code>raise</code> 的消息）</td></tr>
-                                        <tr><td><code>E2009</code></td><td><code>native</code></td><td><strong>库函数报错</strong>：参数类型不对、值不合法、id 无效……</td><td><code>ui.set 不认识的线帽 'pointy'；可用：flat（平头，默认）round（圆头）square（方头）</code>；<code>sleep 的第 1 个参数需要 int</code></td></tr>
+                                        <tr><td><code>E2009</code></td><td><code>native</code></td><td><strong>库函数报错</strong>：参数类型不对、值不合法、id 无效……</td><td><code>sleep 的第 1 个参数需要 int</code>；<code>path.join 的第 2 个参数需要 string</code></td></tr>
                                         <tr><td><code>E2010</code></td><td><code>input</code></td><td>读输入失败（管道被关掉之类）</td><td>—</td></tr>
                                         <tr><td><code>E2011</code></td><td><code>internal</code></td><td>虚拟机的兜底分类：真出了内部问题才会看到。见到它又不明白原因，把它当 bug 报告</td><td>—</td></tr>
                                     </tbody>
@@ -3094,7 +2540,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                 <table class="doc-table doc-table-wide">
                                     <thead><tr><th></th><th>预期失败 → 返回值 + lastError</th><th>程序性错误 → 抛 <code>E2009</code></th></tr></thead>
                                     <tbody>
-                                        <tr><td>典型情形</td><td>文件/目录不存在、环境变量没设、图片打不开、窗口尺寸为 0</td><td>参数类型不对（<code>os.sleep("x")</code>）、值不在取值范围内（<code>ui.set(id,"cap","pointy")</code>）、id 已经失效</td></tr>
+                                        <tr><td>典型情形</td><td>文件/目录不存在、环境变量没设、图片打不开、窗口尺寸为 0</td><td>参数类型不对（<code>os.sleep("x")</code>）、值不在取值范围内（<code>path.join(1, "a")</code>）</td></tr>
                                         <tr><td>你要写什么</td><td><strong>检查返回值</strong>，需要时再读 <code>lastError()</code></td><td>不用检查——它会中断程序，除非你用 <code>try/catch</code></td></tr>
                                         <tr><td>什么时候发生</td><td>和环境/用户输入有关，程序没毛病</td><td>代码写错了，改代码就能修</td></tr>
                                     </tbody>
@@ -3128,14 +2574,14 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                         <tr><td><code>io</code></td><td><code>readFile</code> <code>writeFile</code> <code>appendFile</code> <code>readLines</code> <code>listDir</code> <code>mkdir</code> <code>remove</code> <code>copyFile</code> <code>rename</code> <code>open</code> <code>readBytes</code> <code>write</code> <code>seek</code></td></tr>
                                         <tr><td><code>os</code></td><td><code>getEnv</code> <code>setEnv</code> <code>chdir</code> <code>cwd</code> <code>homeDir</code> <code>hostname</code> <code>formatTime</code></td></tr>
                                         <tr><td><code>path</code></td><td><code>abs</code>（拿不到当前目录时才失败；其余都是纯字符串运算，不会失败）</td></tr>
-                                        <tr><td><code>ui</code></td><td><code>window</code> <code>image</code> <code>canvas</code>（尺寸非法、图片打不开）</td></tr>
+                                        <tr><td><code>json</code></td><td><code>decode</code> <code>decodeFile</code>（文本不是合法 JSON）</td></tr>
                                         <tr><td><code>json</code></td><td>不走这条路：解析失败会<strong>抛错</strong>（<code>E2008</code>），因为它属于“数据坏了，无法继续”</td></tr>
                                     </tbody>
                                 </table>
 
                                 <div class="doc-callout doc-callout-warning">
                                     <strong>lastError 不是状态，是“最近一次失败的原因”</strong>
-                                    <p>它<strong>不会因为你后来成功了一次就保证变成空串</strong>：<code>io</code>/<code>os</code>/<code>path</code> 只有在新的失败时才更新；<code>ui</code> 在成功的建对象操作后会清空。所以正确的读法是——<strong>先判断返回值</strong>，失败了再去读 <code>lastError()</code> 看原因：</p>
+                                    <p>它<strong>不会因为你后来成功了一次就保证变成空串</strong>：<code>io</code> / <code>os</code> / <code>path</code> 只有在新的失败时才更新。所以正确的读法是——<strong>先判断返回值</strong>，失败了再去读 <code>lastError()</code> 看原因：</p>
                                     <div class="code-window code-window-inline">
                                         <div class="code-body">
 <pre><span class="kw">local</span> t = <span class="funcCall">io.readFile</span>(p)
@@ -3156,7 +2602,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
 <span class="errMark">[-] error[E1012]: 库 'io' 里没有函数 'noSuchFn'</span></pre>
                                     </div>
                                 </div>
-                                <p>所以运行期见到的 <code>E2009</code> 基本都是<strong>值或类型</strong>的问题：<code>os.sleep("x")</code>、<code>path.join(1,"a")</code>、<code>ui.set(id,"cursor","pointer")</code>… 这类消息通常已经把可用值列出来了，照着改就行。</p>
+                                <p>所以运行期见到的 <code>E2009</code> 基本都是<strong>值或类型</strong>的问题：<code>os.sleep("x")</code>、<code>path.join(1, "a")</code>… 这类消息通常已经把可用值列出来了，照着改就行。</p>
 
                                 <h2>自己写的库（.m 模块）怎么报错</h2>
                                 <p>Ae 模块就是普通 Ae 代码，所以两种手段都能用：</p>
@@ -3266,7 +2712,7 @@ r.ver = <span class="num">1.7</span>                 <span class="comment">// �
                                     <li><strong>二分注释</strong>：把可疑的一段用 <code>/* … */</code> 括掉，看错误还在不在——用它定位“是谁写的脏数据”。</li>
                                     <li><strong>先查返回值再看 lastError</strong>：库的预期失败返回 <code>null</code>/<code>false</code>，不查就会在后面某处变成“对 null 做加法”这种绕远的错误。</li>
                                     <li><strong>用 <code>assert</code> 把假设写下来</strong>：<code>assert(len(rows) &gt; 0, "空表不该走到这里")</code>。程序会在最早、最清楚的地方停下，而不是在后面报一个莫名奇妙的 <code>E2003</code>。</li>
-                                    <li><strong>图形/窗口类程序</strong>：把中间值画出来最快——<code>ui.text(w, 10, 10, "x=" + x)</code>，或者窗口标题里带上计数；比翻日志直观得多。</li>
+                                    <li><strong>拿不准中间值</strong>：直接 <code>prln("x=", x)</code> 打出来最快，或者用 <code>type(x)</code> 确认类型；比翻日志直观得多。</li>
                                 </ul>
 
                                 <div class="doc-callout doc-callout-warning">

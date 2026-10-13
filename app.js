@@ -13,7 +13,7 @@
     const pages = ['home', 'download', 'docs'];
 
     function showPage(pageId) {
-        const wanted = window.location.hash;      // ★ 先记下来：下面 replaceState 会改掉它
+        const wanted = window.location.hash;      // 先记下来：下面 replaceState 会改掉它
         // 隐藏所有页面
         pages.forEach(function (id) {
             const el = document.getElementById('page-' + id);
@@ -36,14 +36,14 @@
         const hash = pageId === 'home' ? '' : pageId;
         history.replaceState(null, '', hash ? '#' + hash : window.location.pathname);
 
-        // ★ 深链接：进来时 hash 是 #doc-xxx，就滚到那一章
+        // 深链接：进来时 hash 是 #doc-xxx，就滚到那一章
         if (pageId === 'docs' && wanted.indexOf('#doc-') === 0)
             scrollToDoc(wanted.slice(1));
     }
 
     function getPageFromHash() {
         const hash = window.location.hash.replace('#', '');
-        // ★ 直接打开 #doc-xxx（某一章）时也应该落在文档页，而不是回到首页
+        // 直接打开 #doc-xxx（某一章）时也应该落在文档页，而不是回到首页
         if (hash.indexOf('doc-') === 0) return 'docs';
         return pages.includes(hash) ? hash : 'home';
     }
@@ -62,7 +62,7 @@
         const a = e.target.closest('.docs-content a[href^="#doc-"]');
         if (!a) return;
         const id = a.getAttribute('href').slice(1);
-        // ★ 目标章节还不存在（比如正在补写）时也不能让它跳回首页：拦下点击，什么都不做
+        // 目标章节还不存在（比如正在补写）时也不能让它跳回首页：拦下点击，什么都不做
         e.preventDefault();
         if (!document.getElementById(id)) return;
         scrollToDoc(id);
